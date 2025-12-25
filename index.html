@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Diamond Studio Ultimate (v24.1 Fixed)</title>
+<title>Diamond Studio (v25 Ultimate)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================
-   1. CORE UI (DIAMOND THEME)
+   CORE UI (DIAMOND THEME v25)
    ========================================= */
 :root {
-  --primary: #0ea5e9; /* Sky Blue for Diamond feel */
+  --primary: #0ea5e9; 
   --secondary: #6366f1;
   --bg-dark: #0f172a;
   --bg-panel: #1e293b;
@@ -59,14 +59,8 @@ body {
   display: flex; justify-content: space-between; align-items: center;
 }
 .brand { 
-    font-size: 1.3rem; 
-    font-weight: 800; 
-    color: white; 
-    display: flex; align-items: center; gap: 10px;
-    background: linear-gradient(135deg, #fff, #22d3ee);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
+    font-size: 1.3rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(135deg, #fff, #22d3ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 1px;
 }
 .brand i { color: #22d3ee; -webkit-text-fill-color: initial; }
 
@@ -202,7 +196,7 @@ input[type="color"] { padding: 0; height: 38px; cursor: pointer; border:none; bo
 <div class="app-layout">
   <aside class="control-panel">
     <div class="panel-header">
-      <div class="brand"><i class="fas fa-gem"></i> Diamond Studio <small style="opacity:0.5; margin-right:5px; font-size:0.7em">v24.1</small></div>
+      <div class="brand"><i class="fas fa-gem"></i> Diamond Studio <small style="opacity:0.5; margin-right:5px; font-size:0.7em">v25</small></div>
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
     <div class="sticky-tabs">
@@ -396,7 +390,13 @@ window.getControls = function(sec, idx) {
     else if(sec.type==='gallery') {
         h+=`<div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><span>رفع صور</span><input type="file" id="gal-${idx}" hidden multiple accept="image/*" onchange="handleGalleryUpload(event,${idx})"></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">${(d.images||[]).map((img,i)=>`<div style="position:relative"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:4px"><button onclick="removeGalleryImg(${idx},${i})" style="position:absolute;top:0;right:0;background:red;color:white;border:none;width:15px;height:15px;font-size:10px;cursor:pointer">×</button></div>`).join('')}</div>`;
     }
-    else if(sec.type==='video') h+=`<input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"><input class="form-control" placeholder="رابط يوتيوب" value="${d.url}" oninput="updateData(${idx},'url',this.value)">`;
+    else if(sec.type==='video') {
+         // FIXED VIDEO CONTROLS
+         h += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+               <div class="form-group"><label class="form-label">رابط يوتيوب</label><input class="form-control" value="${d.url}" placeholder="https://youtube.com/..." oninput="updateData(${idx},'url',this.value)"></div>
+               <div class="media-upload" onclick="document.getElementById('vid-file-${idx}').click()"><span>أو رفع فيديو (MP4)</span><input type="file" id="vid-file-${idx}" hidden accept="video/*" onchange="handleSectionVideo(event,${idx})"></div>
+               ${d.uploadedVideo ? `<div style="margin-top:10px;text-align:center"><video src="${d.uploadedVideo}" style="width:100%;border-radius:6px" controls></video><button onclick="clearSectionVideo(${idx})" style="background:red;color:white;border:none;padding:5px;border-radius:4px;cursor:pointer;margin-top:5px">حذف الفيديو</button></div>` : ''}`;
+    }
     
     return h;
 }
@@ -446,21 +446,40 @@ window.handleLogo = async function(e) { const f=e.target.files[0]; if(f){const c
 window.removeLogo = function() { project.settings.logo=''; window.fillInputs(); window.updatePreview(); window.saveData(); }
 window.handleItemImage = async function(e,si,ii) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[si].data.items[ii].image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
 window.handleSectionImage = async function(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[i].data.image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+
+// --- FIXED: NEW VIDEO HANDLERS ---
+window.handleSectionVideo = function(e, idx) {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 10 * 1024 * 1024) { showToast("الفيديو كبير جداً (Max 10MB)", true); return; }
+    showLoading();
+    const r = new FileReader();
+    r.onload = res => {
+        project.sections[idx].data.uploadedVideo = res.target.result;
+        hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData();
+    };
+    r.readAsDataURL(f);
+}
+window.clearSectionVideo = function(idx) {
+    project.sections[idx].data.uploadedVideo = '';
+    window.renderSidebar(); window.updatePreview(); window.saveData();
+}
+
 window.toggleAllCards = function(o) { project.sections.forEach(s=>s.collapsed=!o); window.renderSidebar(); }
 window.toggleCard = function(h) { h.nextElementSibling.classList.toggle('open'); }
 window.switchTab = function(id) { document.querySelectorAll('.tab-content,.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
 window.updateStyle = function(k,v) { project.style[k]=v; window.updatePreview(); window.saveData(); }
 window.updateSettings = function(k,v) { project.settings[k]=v; window.updatePreview(); window.saveData(); }
 window.updateSettingsDelayed = function(k,v) { clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>{project.settings[k]=v;window.updatePreview();window.saveData()},800); }
-window.resetProject = function() { if(confirm('مسح الكل؟')) { localStorage.removeItem('gemma_studio_pro_v24'); location.reload(); } }
+window.resetProject = function() { if(confirm('مسح الكل؟')) { localStorage.removeItem('gemma_studio_pro_v25'); location.reload(); } }
 window.downloadHTML = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([window.generateHTML()],{type:'text/html'})); a.download='site.html'; a.click(); }
 window.exportJSON = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)],{type:'application/json'})); a.download='project.json'; a.click(); }
 window.importJSON = function(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=e=>{project=JSON.parse(e.target.result); window.init();}; r.readAsText(f);} }
 window.setDevice = function(m) { currentDevice=m; document.querySelectorAll('.device-btn').forEach(b=>b.classList.remove('active')); document.getElementById('btn-'+m).classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
 window.fillInputs = function() { safeSet('font', project.style.font); safeSet('primaryColor', project.style.primaryColor); safeSet('secondaryColor', project.style.secondaryColor); safeSet('bgColor', project.style.bgColor); safeSet('textColor', project.style.textColor); safeSet('radius', project.style.radius); safeSet('containerWidth', project.style.containerWidth); safeSet('glass', project.style.glass); safeSet('siteTitle', project.settings.title); safeSet('footerText', project.settings.footer); safeSet('gaId', project.settings.ga_id); safeSet('pixelId', project.settings.pixel_id); safeSet('headCode', project.settings.headCode); safeSet('geminiKey', project.settings.apiKey); if(project.settings.logo && document.getElementById('logo-preview')) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; } }
-window.saveData = function() { try { localStorage.setItem('gemma_studio_pro_v24', JSON.stringify(project)); } catch(e){} }
+window.saveData = function() { try { localStorage.setItem('gemma_studio_pro_v25', JSON.stringify(project)); } catch(e){} }
 
-// --- IMPORTANT: ADDED MISSING RENDER FUNCTION ---
+// --- FIXED: ADDED RENDER SIDEBAR ---
 window.renderSidebar = function() {
     const w = document.getElementById('sections-wrapper'); w.innerHTML = '';
     project.sections.forEach((sec, idx) => {
@@ -490,6 +509,11 @@ window.generateHTML = function() {
         }).join('')}</div></div>`;
         else if(sec.type==='gallery') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.images||[]).map(img=>`<img src="${img}" style="width:100%;border-radius:10px">`).join('')}</div></div>`;
         else if(sec.type==='links') body+=`<div class="container" style="max-width:600px;text-align:center"><h2>${d.title}</h2>${(d.items||[]).map(i=>`<a href="${i.url}" class="card-ui" style="flex-direction:row;justify-content:space-between;margin-bottom:15px;padding:20px;font-size:1.1rem"><span>${i.label}</span> <i class="fas fa-arrow-left"></i></a>`).join('')}</div>`;
+        else if(sec.type==='video') {
+            // FIXED VIDEO RENDER
+            const src = d.uploadedVideo || (d.url ? d.url.replace('watch?v=','embed/') : '');
+            if(src) body+=`<div class="container" style="text-align:center"><h2>${d.title}</h2><div style="max-width:800px;margin:auto;border-radius:var(--r);overflow:hidden;background:#000;position:relative;padding-bottom:56.25%;height:0">${d.uploadedVideo?`<video src="${src}" controls style="position:absolute;top:0;left:0;width:100%;height:100%"></video>`:`<iframe src="${src}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"></iframe>`}</div></div>`;
+        }
     });
     body+=`<footer style="padding:40px;text-align:center;background:#1e293b;color:#fff;margin-top:50px">${m.footer}</footer>`;
     return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><style>${css}${m.headCode}</style>${m.ga_id?`<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`:''}</head><body>${body}</body></html>`;
@@ -498,7 +522,7 @@ window.generateHTML = function() {
 window.updatePreview = function() { const f = document.getElementById('previewFrame'); if(f) f.srcdoc = window.generateHTML(); }
 
 window.init = function() {
-    const saved = localStorage.getItem('gemma_studio_pro_v24');
+    const saved = localStorage.getItem('gemma_studio_pro_v25');
     if (saved) try { project = JSON.parse(saved); } catch(e){}
     window.setDevice(currentDevice);
     window.fillInputs();
