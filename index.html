@@ -275,6 +275,17 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
                 <div class="form-group"><label class="form-label">Meta Pixel ID</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
             </div>
         </div>
+        <!-- NEW SECTION: Custom Head Code -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">💻 كود مخصص (CSS/JS)</div>
+            <div class="card-body open">
+                <div class="form-group">
+                    <label class="form-label">كود مخصص في الرأس (Head Code)</label>
+                    <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles or scripts here -->&#10;<style>&#10;  body { background: red; }&#10;</style>" oninput="updateSettings('headCode', this.value)"></textarea>
+                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم إدراج هذا الكود داخل وسم &lt;head&gt;. ممتاز لإضافة CSS مخصص.</p>
+                </div>
+            </div>
+        </div>
       </div>
 
       <!-- 4. EXPORT TAB -->
@@ -315,7 +326,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 // Default State
 const defaultState = {
-    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '' },
+    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '' }, // Added headCode
     style: { font: "'Tajawal', sans-serif", primaryColor: '#4f46e5', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
     sections: [
         { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير يوضح خدماتك.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
@@ -582,6 +593,8 @@ function fillInputs() {
     document.getElementById('footerText').value = project.settings.footer;
     document.getElementById('gaId').value = project.settings.ga_id;
     document.getElementById('pixelId').value = project.settings.pixel_id;
+    // Fill custom head code
+    document.getElementById('headCode').value = project.settings.headCode || ''; 
 
     if(project.settings.logo) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; }
     else { document.getElementById('logo-preview-container').style.display='none'; }
@@ -597,6 +610,9 @@ function generateHTML() {
     let scripts = '';
     if(m.ga_id) scripts += `<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`;
     if(m.pixel_id) scripts += `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${m.pixel_id}');fbq('track','PageView');<\/script>`;
+    
+    // Inject Custom Head Code
+    const customHead = m.headCode || '';
 
     let css = `
         :root { --p:${s.primaryColor}; --s:${s.secondaryColor}; --bg:${s.bgColor}; --txt:${s.textColor}; --r:${s.radius}px; --w:${s.containerWidth}; }
@@ -663,7 +679,7 @@ function generateHTML() {
     });
 
     body += `<footer style="background:#111; color:#888; padding:50px; text-align:center; margin-top:50px"><p>${m.footer}</p></footer>`;
-    return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Changa:wght@400;700&display=swap" rel="stylesheet">${scripts}<style>${css}</style></head><body>${body}</body></html>`;
+    return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Changa:wght@400;700&display=swap" rel="stylesheet">${scripts}${customHead}<style>${css}</style></head><body>${body}</body></html>`;
 }
 
 // --- Utils ---
@@ -682,3 +698,4 @@ init();
 </script>
 </body>
 </html>
+
