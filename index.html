@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pro Builder - Diamond Edition (Manual)</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================
+   1. CORE UI (Professional Dark Theme)
+   ========================================= */
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --secondary: #ec4899;
+  --bg-dark: #0f172a;
+  --bg-panel: #1e293b;
+  --surface: #334155;
+  --border: #475569;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --danger: #ef4444;
+}
+
+* { box-sizing: border-box; outline: none; }
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: #64748b; border-radius: 10px; }
+
+.app-layout {
+  display: grid;
+  grid-template-columns: 450px 1fr;
+  height: 100vh;
+}
+
+/* Sidebar */
+.control-panel {
+  background: var(--bg-panel);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.panel-header {
+  padding: 15px 20px;
+  background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), transparent);
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.brand { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
+.brand i { color: var(--secondary); }
+
+.scroll-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
+
+/* Tabs */
+.nav-tabs { display: flex; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
+.nav-tab {
+  flex: 1; background: transparent; border: none; color: var(--text-muted);
+  padding: 10px; cursor: pointer; border-radius: 6px; font-weight: 600; font-family: inherit; transition: 0.2s; font-size: 0.85rem;
+}
+.nav-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3); }
+.tab-content { display: none; animation: fadeIn 0.3s ease; }
+.tab-content.active { display: block; }
+
+/* Component Cards */
+.card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: border 0.3s; }
+.card:hover { border-color: rgba(255,255,255,0.2); }
+.card-header {
+  padding: 12px 15px; background: rgba(255,255,255,0.03); cursor: pointer;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 600; font-size: 0.9rem; user-select: none;
+}
+.card-header:hover { background: rgba(255,255,255,0.06); }
+.card-body { padding: 15px; border-top: 1px solid var(--border); display: none; background: rgba(0,0,0,0.2); }
+.card-body.open { display: block; }
+
+/* Forms */
+.form-group { margin-bottom: 12px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.form-label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; }
+.form-control {
+  width: 100%; padding: 8px 12px; background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border); border-radius: 6px; color: white;
+  font-family: inherit; font-size: 0.9rem; transition: 0.2s;
+}
+.form-control:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
+input[type="color"] { padding: 0; height: 35px; cursor: pointer; border:none; border-radius:4px; overflow:hidden; }
+input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+
+/* Buttons & Tools */
+.tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.tool-btn {
+    display: flex; align-items: center; gap: 10px; padding: 12px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.85rem;
+}
+.tool-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+.tool-btn i { font-size: 1.1rem; }
+
+.btn {
+  width: 100%; padding: 10px; border: none; border-radius: 6px;
+  cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s;
+  display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
+.btn-outline:hover { border-color: var(--text-main); color: var(--text-main); background: rgba(255,255,255,0.05); }
+.btn-action { padding: 4px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; transition:0.2s; }
+.btn-action:hover { background: white; color: black; }
+.btn-danger-icon { color: #f87171; border-color: rgba(239,68,68,0.3); }
+.btn-danger-icon:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+/* Media */
+.media-upload {
+  border: 2px dashed var(--border); padding: 15px; text-align: center;
+  border-radius: 8px; cursor: pointer; color: var(--text-muted);
+  transition: 0.2s; background: rgba(0,0,0,0.1); font-size: 0.85rem;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.media-upload:hover { border-color: var(--primary); color: var(--primary); }
+.preview-container { margin-top: 10px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
+.preview-img { width: 100%; height: 120px; object-fit: cover; display: block; background: #000; }
+.remove-media { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.9); color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; z-index: 10; display:flex; justify-content:center; align-items:center; }
+
+.gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-top: 10px; }
+.gallery-item { position: relative; aspect-ratio: 1; border-radius: 4px; overflow: hidden; border: 1px solid var(--border); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+.gallery-item button { position: absolute; top: 0; right: 0; width: 20px; height: 20px; background: rgba(239,68,68,0.9); color: white; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; font-size: 10px; }
+
+/* Preview Area */
+.preview-area {
+  background: #050505; display: flex; flex-direction: column;
+  background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px;
+}
+.preview-toolbar {
+  background: var(--bg-panel); padding: 10px; display: flex; justify-content: center; gap: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.device-btn { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; padding: 8px; transition: 0.2s; border-radius: 6px; }
+.device-btn.active { color: white; background: var(--primary); }
+.iframe-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; overflow: hidden; }
+.preview-frame { background: white; border: none; transition: 0.5s; box-shadow: 0 50px 100px rgba(0,0,0,0.6); }
+.preview-frame.desktop { width: 100%; height: 100%; border-radius: 4px; }
+.preview-frame.tablet { width: 768px; height: 90%; border-radius: 16px; border: 10px solid #1e293b; }
+.preview-frame.mobile { width: 375px; height: 85%; border-radius: 30px; border: 12px solid #1e293b; }
+
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+@media (max-width: 1024px) { .app-layout { grid-template-columns: 1fr; } .preview-area { display: none; } }
+</style>
+</head>
+<body>
+
+<div id="toast" style="position:fixed; bottom:20px; right:20px; background:#10b981; color:white; padding:12px 30px; border-radius:6px; opacity:0; transition:0.3s; pointer-events:none; z-index:2000; font-weight:bold; box-shadow:0 10px 30px rgba(0,0,0,0.4)">تم الحفظ بنجاح</div>
+
+<div class="app-layout">
+  <!-- Sidebar -->
+  <aside class="control-panel">
+    <div class="panel-header">
+      <div class="brand"><i class="fas fa-gem"></i> Pro Builder <small style="opacity:0.5; margin-right:5px">DIAMOND</small></div>
+      <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
+    </div>
+
+    <div class="scroll-area">
+      <div class="nav-tabs">
+        <button class="nav-tab active" onclick="switchTab('content')">المحتوى</button>
+        <button class="nav-tab" onclick="switchTab('design')">المظهر</button>
+        <button class="nav-tab" onclick="switchTab('settings')">الإعدادات</button>
+        <button class="nav-tab" onclick="switchTab('export')">تصدير</button>
+      </div>
+
+      <!-- 1. CONTENT TAB -->
+      <div id="tab-content" class="tab-content active">
+        <div id="sections-wrapper"></div>
+        
+        <div style="margin-top:25px; border-top:1px solid var(--border); padding-top:20px;">
+          <label class="form-label" style="text-align:center; margin-bottom:15px; opacity:0.8">إضافة عنصر جديد</label>
+          <div class="tools-grid">
+            <button class="tool-btn" onclick="addSection('hero')"><i class="fas fa-desktop"></i> واجهة (Hero)</button>
+            <button class="tool-btn" onclick="addSection('features')"><i class="fas fa-th-large"></i> مميزات (Cards)</button>
+            <button class="tool-btn" onclick="addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
+            <button class="tool-btn" onclick="addSection('gallery')"><i class="fas fa-images"></i> معرض صور</button>
+            <button class="tool-btn" onclick="addSection('text')"><i class="fas fa-align-left"></i> محتوى نصي</button>
+            <button class="tool-btn" onclick="addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
+            <button class="tool-btn" onclick="addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
+            <button class="tool-btn" onclick="addSection('links')"><i class="fas fa-link"></i> روابط</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. DESIGN TAB -->
+      <div id="tab-design" class="tab-content">
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">🎨 الهوية البصرية</div>
+            <div class="card-body open">
+                <div class="form-group">
+                    <label class="form-label">نوع الخط</label>
+                    <select class="form-control" id="font" onchange="updateStyle('font', this.value)">
+                        <option value="'Tajawal', sans-serif">Tajawal (عصري)</option>
+                        <option value="'Cairo', sans-serif">Cairo (رسمي)</option>
+                        <option value="'Changa', sans-serif">Changa (إعلاني)</option>
+                        <option value="sans-serif">System Default</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div><label class="form-label">اللون الرئيسي</label><input type="color" class="form-control" id="primaryColor" oninput="updateStyle('primaryColor', this.value)"></div>
+                    <div><label class="form-label">اللون الثانوي</label><input type="color" class="form-control" id="secondaryColor" oninput="updateStyle('secondaryColor', this.value)"></div>
+                </div>
+                <div class="form-row">
+                    <div><label class="form-label">خلفية الموقع</label><input type="color" class="form-control" id="bgColor" oninput="updateStyle('bgColor', this.value)"></div>
+                    <div><label class="form-label">لون النصوص</label><input type="color" class="form-control" id="textColor" oninput="updateStyle('textColor', this.value)"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">📐 واجهة المستخدم (UI)</div>
+            <div class="card-body open">
+                <div class="form-group">
+                    <label class="form-label">انحناء الحواف (Border Radius)</label>
+                    <input type="range" min="0" max="30" id="radius" oninput="updateStyle('radius', this.value)">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">عرض المحتوى (Container)</label>
+                    <select class="form-control" id="containerWidth" onchange="updateStyle('containerWidth', this.value)">
+                        <option value="1100px">متوسط (1100px)</option>
+                        <option value="1300px">عريض (1300px)</option>
+                        <option value="100%">كامل (Full Width)</option>
+                    </select>
+                </div>
+                <div class="form-group" style="display:flex; align-items:center; gap:10px; border-top:1px solid var(--border); padding-top:10px; margin-top:10px">
+                    <input type="checkbox" id="glass" onchange="updateStyle('glass', this.checked)">
+                    <label class="form-label" style="margin:0; cursor:pointer" for="glass">تفعيل تأثير الزجاج (Glassmorphism)</label>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      <!-- 3. SETTINGS TAB -->
+      <div id="tab-settings" class="tab-content">
+        <div class="card">
+          <div class="card-header" onclick="toggleCard(this)">⚙️ إعدادات الموقع</div>
+          <div class="card-body open">
+            <div class="form-group"><label class="form-label">اسم الموقع</label><input type="text" class="form-control" id="siteTitle" oninput="updateSettings('title', this.value)"></div>
+            <div class="form-group">
+                <label class="form-label">الشعار (Logo)</label>
+                <div class="media-upload" onclick="document.getElementById('logo-upload').click()">
+                    <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                    <span>رفع شعار من الجهاز</span>
+                    <input type="file" id="logo-upload" style="display:none" accept="image/*" onchange="handleLogo(event)">
+                </div>
+                <div id="logo-preview-container" class="preview-container" style="display:none; height:80px; width:80px; margin:10px auto; border:none; background:transparent">
+                    <img id="logo-preview" style="width:100%; height:100%; object-fit:contain">
+                    <button class="remove-media" onclick="removeLogo()">×</button>
+                </div>
+            </div>
+            <div class="form-group"><label class="form-label">حقوق الفوتر</label><input type="text" class="form-control" id="footerText" oninput="updateSettings('footer', this.value)"></div>
+          </div>
+        </div>
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">📈 أكواد التتبع</div>
+            <div class="card-body">
+                <div class="form-group"><label class="form-label">Google Analytics ID</label><input type="text" class="form-control" placeholder="G-XXXXXXXX" id="gaId" oninput="updateSettings('ga_id', this.value)"></div>
+                <div class="form-group"><label class="form-label">Meta Pixel ID</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
+            </div>
+        </div>
+      </div>
+
+      <!-- 4. EXPORT TAB -->
+      <div id="tab-export" class="tab-content">
+        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:10px; text-align:center; margin-bottom:15px">
+            <i class="fas fa-code fa-3x" style="color:var(--primary); margin-bottom:15px; display:block"></i>
+            <h3 style="margin:0">تصدير المشروع</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem">احصل على كود نظيف وجاهز للنشر فوراً.</p>
+        </div>
+        <button class="btn btn-primary" onclick="downloadHTML()"><i class="fas fa-download"></i> تحميل ملف HTML</button>
+        <button class="btn btn-outline" onclick="exportJSON()"><i class="fas fa-save"></i> حفظ ملف المشروع</button>
+        <label class="btn btn-outline" style="position:relative">
+            <i class="fas fa-upload"></i> استيراد مشروع سابق
+            <input type="file" style="position:absolute; inset:0; opacity:0; cursor:pointer" onchange="importJSON(event)">
+        </label>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- Preview Area -->
+  <main class="preview-area">
+    <div class="preview-toolbar">
+      <i class="fas fa-desktop device-btn active" onclick="setDevice('desktop')" title="كمبيوتر"></i>
+      <i class="fas fa-tablet-alt device-btn" onclick="setDevice('tablet')" title="تابلت"></i>
+      <i class="fas fa-mobile-alt device-btn" onclick="setDevice('mobile')" title="موبايل"></i>
+    </div>
+    <div class="iframe-wrapper">
+      <iframe id="previewFrame" class="preview-frame desktop"></iframe>
+    </div>
+  </main>
+</div>
+
+<script>
+/* =========================================
+   LOGIC CORE: DIAMOND MANUAL ENGINE
+   ========================================= */
+
+// Default State
+const defaultState = {
+    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '' },
+    style: { font: "'Tajawal', sans-serif", primaryColor: '#4f46e5', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
+    sections: [
+        { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير يوضح خدماتك.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
+    ]
+};
+
+let project = JSON.parse(JSON.stringify(defaultState));
+
+// --- Initialization ---
+function init() {
+    const saved = localStorage.getItem('pro_diamond_manual');
+    if (saved) { try { project = JSON.parse(saved); } catch(e) { console.error('Save Error'); } }
+    fillInputs();
+    renderSidebar(); // Render UI structure
+    updatePreview(); // Render Preview Iframe
+}
+
+// --- STATE MANAGEMENT (Fixes Focus Loss) ---
+// We separate Rendering Sidebar (Structure) from Updating Data (Values)
+
+function renderSidebar() {
+    const wrapper = document.getElementById('sections-wrapper');
+    wrapper.innerHTML = ''; // Clear current
+
+    project.sections.forEach((sec, idx) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header" onclick="toggleCard(this)">
+                <span><span style="color:var(--primary); margin-left:5px">${idx+1}.</span> ${sec.name}</span>
+                <div onclick="event.stopPropagation()">
+                    <button class="btn-action" onclick="moveSection(${idx},-1)">▲</button>
+                    <button class="btn-action" onclick="moveSection(${idx},1)">▼</button>
+                    <button class="btn-action" onclick="duplicateSection(${idx})"><i class="far fa-copy"></i></button>
+                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">اسم القسم (للتنظيم)</label>
+                    <input type="text" class="form-control" value="${sec.name}" oninput="updateSecName(${idx}, this.value)">
+                </div>
+                ${getControls(sec, idx)}
+            </div>
+        `;
+        wrapper.appendChild(card);
+    });
+}
+
+function getControls(sec, idx) {
+    const d = sec.data;
+    let html = '';
+
+    if(sec.type === 'hero') {
+        html += `
+            <div class="form-row">
+                <div><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+                <div><label class="form-label">المحاذاة</label><select class="form-control" onchange="updateData(${idx},'align',this.value)"><option value="center" ${d.align=='center'?'selected':''}>وسط</option><option value="right" ${d.align=='right'?'selected':''}>يمين</option></select></div>
+            </div>
+            <div class="form-group"><label class="form-label">الوصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div>
+            <div class="form-row">
+                <div><label class="form-label">نص الزر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div>
+                <div><label class="form-label">الرابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div>
+            </div>
+            <div class="form-row">
+                <div><label class="form-label">الارتفاع</label><input type="range" min="50" max="100" value="${parseInt(d.height)}" oninput="updateData(${idx},'height',this.value+'vh')"></div>
+                <div><label class="form-label">تظليل الخلفية</label><input type="range" min="0" max="0.9" step="0.1" value="${d.overlay}" oninput="updateData(${idx},'overlay',this.value)"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">خلفية (صورة / فيديو)</label>
+                <div class="media-upload" onclick="document.getElementById('hero-file-${idx}').click()">
+                    <i class="fas fa-cloud-upload-alt fa-2x"></i> <span>اختر ملف</span>
+                    <input type="file" id="hero-file-${idx}" style="display:none" accept="image/*,video/*" onchange="handleHeroMedia(event, ${idx})">
+                </div>
+                ${d.uploadedBg || d.uploadedVideo ? `
+                <div class="preview-container">
+                    ${d.uploadedVideo ? `<video src="${d.uploadedVideo}" class="preview-media" muted loop autoplay></video>` : `<img src="${d.uploadedBg}" class="preview-media">`}
+                    <button class="remove-media" onclick="clearHeroMedia(${idx})">×</button>
+                </div>` : ''}
+            </div>
+        `;
+    }
+    else if(['features', 'pricing', 'links'].includes(sec.type)) {
+        html += `<div class="form-group"><label class="form-label">العنوان الرئيسي</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>`;
+        
+        d.items.forEach((item, i) => {
+            html += `<div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; margin-bottom:8px; position:relative; border:1px solid var(--border)">
+                <button onclick="removeItem(${idx}, ${i})" style="position:absolute; top:5px; left:5px; background:none; border:none; color:var(--danger); cursor:pointer">×</button>
+                <div class="form-row">
+                    <input class="form-control" placeholder="العنوان" value="${item.title||item.name||item.label||''}" oninput="updateItem(${idx},${i},'title',this.value,'${sec.type}')">
+                    <input class="form-control" placeholder="${sec.type==='pricing'?'السعر':'أيقونة'}" value="${item.icon||item.price||''}" oninput="updateItem(${idx},${i},'icon',this.value,'${sec.type}')">
+                </div>
+                ${sec.type!=='links'?`<textarea class="form-control" placeholder="الوصف" style="height:50px" oninput="updateItem(${idx},${i},'text',this.value,'${sec.type}')">${item.text||item.features||''}</textarea>`:''}
+                ${sec.type!=='features'?`<input class="form-control" placeholder="الرابط" value="${item.link||item.url||'#'}" oninput="updateItem(${idx},${i},'link',this.value,'${sec.type}')" style="margin-top:5px">`:''}
+            </div>`;
+        });
+        html += `<button class="btn-outline" onclick="addItem(${idx}, '${sec.type}')">+ إضافة عنصر</button>`;
+    }
+    else if(sec.type === 'gallery') {
+        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+        <div class="media-upload" onclick="document.getElementById('gal-${idx}').click()">
+            <i class="fas fa-images fa-2x"></i> <span>رفع صور (متعدد)</span>
+            <input type="file" id="gal-${idx}" multiple accept="image/*" style="display:none" onchange="handleGalleryUpload(event, ${idx})">
+        </div>
+        <div class="gallery-grid">
+            ${(d.images||[]).map((img, i) => `<div class="gallery-item"><img src="${img}"><button onclick="removeGalleryImg(${idx}, ${i})"><i class="fas fa-trash"></i></button></div>`).join('')}
+        </div>`;
+    }
+    else if(sec.type === 'text') {
+        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+        <div class="form-group"><label class="form-label">المحتوى النصي</label><textarea class="form-control" style="height:150px" oninput="updateData(${idx},'content',this.value)">${d.content}</textarea></div>`;
+    }
+    else if(sec.type === 'video') {
+        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+        <div class="form-group"><label class="form-label">رابط يوتيوب</label><input class="form-control" value="${d.url}" oninput="updateData(${idx},'url',this.value)"></div>
+        <div class="form-group" style="text-align:center; font-size:0.8rem">أو رفع فيديو</div>
+        <div class="media-upload" onclick="document.getElementById('vid-${idx}').click()">
+            <i class="fas fa-video fa-2x"></i> <span>اختر ملف</span>
+            <input type="file" id="vid-${idx}" style="display:none" accept="video/*" onchange="handleSingleUpload(event, ${idx}, 'uploadedVideo')">
+        </div>
+        ${d.uploadedVideo ? `<div class="preview-container"><video src="${d.uploadedVideo}" class="preview-media" controls></video><button class="remove-media" onclick="updateData(${idx},'uploadedVideo','')">×</button></div>` : ''}`;
+    }
+    else if(sec.type === 'contact') {
+        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>
+        <div class="form-row">
+            <div><label class="form-label">البريد</label><input class="form-control" value="${d.email}" oninput="updateData(${idx},'email',this.value)"></div>
+            <div><label class="form-label">الهاتف</label><input class="form-control" value="${d.phone}" oninput="updateData(${idx},'phone',this.value)"></div>
+        </div>`;
+    }
+
+    return html;
+}
+
+// --- CORE ACTIONS ---
+
+function addSection(type) {
+    let data = {}; 
+    // Manual Defaults
+    if(type==='hero') data = { title:'عنوان واجهة جذاب', subtitle:'وصف مختصر.', btnText:'تواصل معنا', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
+    if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة 1', icon:'⭐', text:'وصف الميزة'}] };
+    if(type==='gallery') data = { title:'معرض الصور', images:[] };
+    if(type==='text') data = { title:'من نحن', content:'اكتب تفاصيل المحتوى هنا...' };
+    if(type==='video') data = { title:'فيديو تعريفي', url:'', uploadedVideo:'' };
+    if(type==='contact') data = { title:'اتصل بنا', email:'info@site.com', phone:'' };
+    if(type==='pricing') data = { title:'الأسعار', items:[{name:'باقة', price:'$10', features:'ميزات...', link:'#'}] };
+    if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
+
+    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data });
+    renderSidebar(); updatePreview(); saveData();
+    setTimeout(()=>document.querySelector('.scroll-area').scrollTop = document.querySelector('.scroll-area').scrollHeight, 100);
+}
+
+// This function updates data WITHOUT re-rendering the sidebar (Crucial for focus)
+function updateData(idx, key, val) {
+    project.sections[idx].data[key] = val;
+    updatePreview(); saveData();
+}
+
+function updateSecName(idx, val) {
+    project.sections[idx].name = val;
+    saveData(); // No preview update needed for name change
+}
+
+// Structure changes require re-render
+function moveSection(idx, dir) {
+    if(idx+dir < 0 || idx+dir >= project.sections.length) return;
+    const temp = project.sections[idx]; project.sections[idx] = project.sections[idx+dir]; project.sections[idx+dir] = temp;
+    renderSidebar(); updatePreview(); saveData();
+}
+function duplicateSection(idx) {
+    const clone = JSON.parse(JSON.stringify(project.sections[idx]));
+    clone.id = 's'+Date.now(); clone.name += ' (نسخة)';
+    project.sections.splice(idx+1, 0, clone);
+    renderSidebar(); updatePreview(); saveData();
+}
+function deleteSection(idx) {
+    if(confirm('حذف هذا القسم؟')) { project.sections.splice(idx,1); renderSidebar(); updatePreview(); saveData(); }
+}
+
+// Item Handling
+function updateItem(idx, i, key, val, type) {
+    let item = project.sections[idx].data.items[i];
+    if(type==='pricing' && key==='title') item.name = val;
+    else if(type==='pricing' && key==='icon') item.price = val;
+    else if(type==='pricing' && key==='text') item.features = val;
+    else if(type==='links' && key==='title') item.label = val;
+    else if(type==='links' && key==='link') item.url = val;
+    else item[key] = val;
+    updatePreview(); saveData();
+}
+function addItem(idx, type) {
+    let item = {title:'جديد', icon:'✨', text:'وصف'};
+    if(type==='pricing') item = {name:'باقة', price:'$0', features:'مزايا', link:'#'};
+    if(type==='links') item = {label:'رابط', url:'#'};
+    project.sections[idx].data.items.push(item);
+    renderSidebar(); updatePreview(); saveData();
+}
+function removeItem(idx, i) {
+    project.sections[idx].data.items.splice(i, 1);
+    renderSidebar(); updatePreview(); saveData();
+}
+
+// Media
+function handleHeroMedia(e, idx) {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = res => {
+        if(f.type.startsWith('video')) { project.sections[idx].data.uploadedVideo = res.target.result; project.sections[idx].data.uploadedBg = ''; }
+        else { project.sections[idx].data.uploadedBg = res.target.result; project.sections[idx].data.uploadedVideo = ''; }
+        renderSidebar(); updatePreview(); saveData();
+    };
+    r.readAsDataURL(f);
+}
+function clearHeroMedia(idx) { project.sections[idx].data.uploadedBg=''; project.sections[idx].data.uploadedVideo=''; renderSidebar(); updatePreview(); saveData(); }
+
+function handleSingleUpload(e, idx, key) {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = res => { project.sections[idx].data[key] = res.target.result; renderSidebar(); updatePreview(); saveData(); };
+    r.readAsDataURL(f);
+}
+
+function handleGalleryUpload(e, idx) {
+    const files = Array.from(e.target.files);
+    if(files.length === 0) return;
+    if(!project.sections[idx].data.images) project.sections[idx].data.images = [];
+    files.forEach(f => {
+        const r = new FileReader();
+        r.onload = res => {
+            project.sections[idx].data.images.push(res.target.result);
+            if(files.indexOf(f) === files.length - 1) { renderSidebar(); updatePreview(); saveData(); }
+        };
+        r.readAsDataURL(f);
+    });
+}
+function removeGalleryImg(idx, i) {
+    project.sections[idx].data.images.splice(i, 1);
+    renderSidebar(); updatePreview(); saveData();
+}
+
+function handleLogo(e) {
+    const f = e.target.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = res => { project.settings.logo = res.target.result; fillInputs(); updatePreview(); saveData(); };
+    r.readAsDataURL(f);
+}
+function removeLogo() { project.settings.logo = ''; fillInputs(); updatePreview(); saveData(); }
+
+// --- Globals ---
+function updateStyle(key, val) { project.style[key] = val; updatePreview(); saveData(); }
+function updateSettings(key, val) { project.settings[key] = val; updatePreview(); saveData(); }
+
+function fillInputs() {
+    document.getElementById('font').value = project.style.font;
+    document.getElementById('primaryColor').value = project.style.primaryColor;
+    document.getElementById('secondaryColor').value = project.style.secondaryColor;
+    document.getElementById('bgColor').value = project.style.bgColor;
+    document.getElementById('textColor').value = project.style.textColor;
+    document.getElementById('radius').value = project.style.radius;
+    document.getElementById('containerWidth').value = project.style.containerWidth;
+    document.getElementById('glass').checked = project.style.glass;
+    
+    document.getElementById('siteTitle').value = project.settings.title;
+    document.getElementById('footerText').value = project.settings.footer;
+    document.getElementById('gaId').value = project.settings.ga_id;
+    document.getElementById('pixelId').value = project.settings.pixel_id;
+
+    if(project.settings.logo) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; }
+    else { document.getElementById('logo-preview-container').style.display='none'; }
+}
+
+// --- Preview Engine (Generator) ---
+function generateHTML() {
+    const s = project.style;
+    const m = project.settings;
+    const glass = s.glass ? `background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); border:1px solid rgba(255,255,255,0.6);` : `background:white; box-shadow:0 5px 15px rgba(0,0,0,0.05); border:1px solid #f1f5f9;`;
+    
+    // Scripts
+    let scripts = '';
+    if(m.ga_id) scripts += `<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`;
+    if(m.pixel_id) scripts += `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${m.pixel_id}');fbq('track','PageView');<\/script>`;
+
+    let css = `
+        :root { --p:${s.primaryColor}; --s:${s.secondaryColor}; --bg:${s.bgColor}; --txt:${s.textColor}; --r:${s.radius}px; --w:${s.containerWidth}; }
+        body { margin:0; font-family:${s.font}; background:var(--bg); color:var(--txt); line-height:1.6; overflow-x:hidden; direction:rtl; }
+        a { text-decoration:none; color:inherit; transition:0.3s; }
+        .container { max-width:var(--w); margin:0 auto; padding:60px 20px; position:relative; z-index:2; }
+        .btn { display:inline-block; padding:12px 35px; border-radius:50px; background:var(--p); color:white; font-weight:bold; border:none; cursor:pointer; transition:0.3s; box-shadow:0 4px 15px rgba(0,0,0,0.1); }
+        .btn:hover { transform:translateY(-3px); box-shadow:0 8px 25px rgba(0,0,0,0.2); filter:brightness(1.1); }
+        .card-ui { ${glass} padding:30px; border-radius:var(--r); text-align:center; height:100%; display:flex; flex-direction:column; align-items:center; transition:0.3s; }
+        .card-ui:hover { transform:translateY(-8px); box-shadow:0 15px 30px rgba(0,0,0,0.1); border-color:var(--p); }
+        nav { position:sticky; top:0; z-index:999; padding:15px 5%; display:flex; justify-content:space-between; align-items:center; ${glass} border-radius:0 0 var(--r) var(--r); border-top:none; }
+        .grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:30px; }
+        .hero { position:relative; display:flex; align-items:center; justify-content:center; overflow:hidden; color:white; }
+        .hero-media { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; }
+        .hero-content { position:relative; z-index:2; padding:20px; max-width:900px; animation:fadeIn 1s ease; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    `;
+
+    let body = `<nav>
+        <div style="font-weight:bold; font-size:1.4rem; display:flex; align-items:center; gap:10px; color:var(--p)">
+            ${m.logo?`<img src="${m.logo}" style="height:45px; border-radius:4px">`:''} <span>${m.title}</span>
+        </div>
+        <a href="#contact" class="btn">تواصل معنا</a>
+    </nav>`;
+
+    project.sections.forEach(sec => {
+        const d = sec.data;
+        if(sec.type === 'hero') {
+            const media = d.uploadedVideo ? `<video src="${d.uploadedVideo}" class="hero-media" autoplay muted loop playsinline></video>` : `<img src="${d.uploadedBg||'https://via.placeholder.com/1600x900'}" class="hero-media">`;
+            body += `<section class="hero" style="height:${d.height}; text-align:${d.align}">
+                ${media}
+                <div style="position:absolute; inset:0; background:rgba(0,0,0,${d.overlay}); z-index:1"></div>
+                <div class="hero-content">
+                    <h1 style="font-size:3.5rem; margin-bottom:15px; line-height:1.2">${d.title}</h1>
+                    <p style="font-size:1.3rem; opacity:0.9; margin-bottom:35px">${d.subtitle}</p>
+                    <a href="${d.btnLink}" class="btn" style="background:white; color:var(--p)">${d.btnText}</a>
+                </div>
+            </section>`;
+        }
+        else if(sec.type === 'features') {
+            body += `<div class="container"><h2 style="text-align:center; color:var(--p); margin-bottom:50px; font-size:2.5rem">${d.title}</h2>
+            <div class="grid">${d.items.map(i => `<div class="card-ui"><div style="font-size:3rem; margin-bottom:15px">${i.icon}</div><h3 style="font-size:1.5rem; margin-bottom:10px">${i.title}</h3><p style="opacity:0.8">${i.text}</p></div>`).join('')}</div></div>`;
+        }
+        else if(sec.type === 'video') {
+            const src = d.uploadedVideo || (d.url ? d.url.replace('watch?v=','embed/') : '');
+            if(src) body += `<div class="container" style="text-align:center"><h2 style="color:var(--p); margin-bottom:40px; font-size:2.5rem">${d.title}</h2><div style="max-width:900px; margin:auto; border-radius:var(--r); overflow:hidden; box-shadow:0 30px 60px rgba(0,0,0,0.2); background:black; position:relative; padding-bottom:56.25%; height:0">${d.uploadedVideo?`<video src="${src}" controls style="position:absolute; top:0; left:0; width:100%; height:100%"></video>`:`<iframe src="${src}" style="position:absolute; top:0; left:0; width:100%; height:100%; border:none"></iframe>`}</div></div>`;
+        }
+        else if(sec.type === 'gallery') {
+            body += `<div class="container"><h2 style="text-align:center; color:var(--p); margin-bottom:50px; font-size:2.5rem">${d.title}</h2>
+            <div style="columns:3 250px; gap:20px">${(d.images||[]).map(img => `<div style="break-inside:avoid; margin-bottom:20px"><img src="${img}" style="width:100%; border-radius:var(--r); transition:0.3s; cursor:pointer" onclick="window.open(this.src)" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'"></div>`).join('')}</div></div>`;
+        }
+        else if(sec.type === 'pricing') {
+            body += `<div class="container"><h2 style="text-align:center; color:var(--p); margin-bottom:50px; font-size:2.5rem">${d.title}</h2><div class="grid">${d.items.map(i => `<div class="card-ui" style="border-top:5px solid var(--s)"><h3 style="font-size:1.4rem; margin-bottom:10px">${i.name}</h3><div style="font-size:3rem; font-weight:800; color:var(--p); margin-bottom:20px">${i.price}</div><p style="opacity:0.8">${i.features}</p><a href="${i.link}" class="btn" style="margin-top:auto; background:transparent; border:2px solid var(--p); color:var(--p)">اشتراك</a></div>`).join('')}</div></div>`;
+        }
+        else if(sec.type === 'text') {
+            body += `<div class="container" style="max-width:800px"><h2 style="text-align:center; color:var(--p); margin-bottom:30px; font-size:2.5rem">${d.title}</h2><div class="card-ui" style="text-align:right; align-items:flex-start; font-size:1.1rem; line-height:2">${d.content.replace(/\n/g, '<br>')}</div></div>`;
+        }
+        else if(sec.type === 'contact') {
+            body += `<div class="container" id="contact" style="background:linear-gradient(135deg, var(--p), var(--s)); color:white; border-radius:30px; padding:60px 20px; text-align:center"><h2 style="font-size:2.5rem; margin-bottom:20px">${d.title}</h2><div style="font-size:1.3rem; opacity:0.9">${d.email} <br> ${d.phone}</div></div>`;
+        }
+        else if(sec.type === 'links') {
+            body += `<div class="container" style="max-width:600px; text-align:center"><h2 style="color:var(--p); margin-bottom:30px; font-size:2.5rem">${d.title}</h2>${d.items.map(i => `<a href="${i.url}" class="card-ui" style="flex-direction:row; justify-content:space-between; margin-bottom:15px; padding:20px; font-size:1.1rem"><span>${i.label}</span> <i class="fas fa-arrow-left"></i></a>`).join('')}</div>`;
+        }
+    });
+
+    body += `<footer style="background:#111; color:#888; padding:50px; text-align:center; margin-top:50px"><p>${m.footer}</p></footer>`;
+    return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Changa:wght@400;700&display=swap" rel="stylesheet">${scripts}<style>${css}</style></head><body>${body}</body></html>`;
+}
+
+// --- Utils ---
+function saveData() { localStorage.setItem('pro_diamond_manual', JSON.stringify(project)); showToast(); }
+function showToast() { const t=document.getElementById('toast'); t.style.opacity='1'; setTimeout(()=>t.style.opacity='0', 1500); }
+function updatePreview() { const f=document.getElementById('previewFrame'); if(f) f.srcdoc = generateHTML(); }
+function switchTab(id) { document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
+function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
+function setDevice(m) { document.querySelectorAll('.device-btn').forEach(e=>e.classList.remove('active')); event.target.classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
+function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()], {type:'text/html'})); a.download='website.html'; a.click(); }
+function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)], {type:'application/json'})); a.download='project.json'; a.click(); }
+function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=res=>{project=JSON.parse(res.target.result); init(); showToast();}; r.readAsText(f);} }
+function resetProject() { if(confirm('هل أنت متأكد من الحذف والبدء من جديد؟')) { localStorage.removeItem('pro_diamond_manual'); location.reload(); } }
+
+init();
+</script>
+</body>
+</html>
