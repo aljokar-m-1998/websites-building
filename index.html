@@ -3,26 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gemma Studio Ultimate (v21 Fixed)</title>
+<title>Gemma Studio Pro Max (v23 - AI Features)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================
-   1. CORE UI (Ultimate Dark Theme)
+   CORE UI (Ultimate Dark Theme)
    ========================================= */
 :root {
   --primary: #6366f1;
-  --primary-hover: #4f46e5;
   --secondary: #ec4899;
-  --accent: #f59e0b;
   --bg-dark: #0f172a;
   --bg-panel: #1e293b;
   --border: rgba(255, 255, 255, 0.1);
-  --glass: rgba(255, 255, 255, 0.05);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --danger: #ef4444;
   --success: #10b981;
+  --ai-color: #a855f7; /* المميز للذكاء الاصطناعي */
 }
 
 * { box-sizing: border-box; outline: none; }
@@ -41,12 +39,7 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 
-.app-layout {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  flex: 1;
-  overflow: hidden;
-}
+.app-layout { display: grid; grid-template-columns: 420px 1fr; flex: 1; overflow: hidden; }
 
 /* Sidebar */
 .control-panel {
@@ -63,30 +56,10 @@ body {
   background: rgba(0,0,0,0.2);
   border-bottom: 1px solid var(--border);
   display: flex; justify-content: space-between; align-items: center;
-  flex-shrink: 0;
 }
-.brand { 
-    font-size: 1.2rem; 
-    font-weight: 800; 
-    background: linear-gradient(120deg, #fff, var(--primary)); 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-}
+.brand { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
 
-.scroll-area {
-  flex: 1;
-  overflow-y: auto;
-  padding: 15px;
-  padding-bottom: 80px; 
-}
-
-/* Tabs */
-.sticky-tabs {
-  padding: 10px 15px;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
+.sticky-tabs { padding: 10px 15px; background: var(--bg-panel); border-bottom: 1px solid var(--border); }
 .nav-tabs { display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 8px; border: 1px solid var(--border); gap: 4px; }
 .nav-tab {
   flex: 1; background: transparent; border: none; color: var(--text-muted);
@@ -95,12 +68,12 @@ body {
 }
 .nav-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
+.scroll-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
 .tab-content { display: none; animation: fadeIn 0.3s ease; }
 .tab-content.active { display: block; }
 
-/* Cards & Forms */
+/* Components */
 .card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: border 0.3s; }
-.card:hover { border-color: rgba(255,255,255,0.2); }
 .card-header {
   padding: 12px 15px; background: rgba(255,255,255,0.03); cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
@@ -119,53 +92,42 @@ body {
 }
 .form-control:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
 input[type="color"] { padding: 0; height: 38px; cursor: pointer; border:none; border-radius:4px; overflow:hidden; }
-input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+
+/* AI Helper Button inside inputs */
+.ai-field-btn {
+    position: absolute; left: 8px; bottom: 8px;
+    background: transparent; border: none; color: var(--ai-color);
+    cursor: pointer; font-size: 1rem; transition: 0.2s;
+    opacity: 0.7; z-index: 10;
+}
+.ai-field-btn:hover { opacity: 1; transform: scale(1.2) rotate(15deg); text-shadow: 0 0 10px var(--ai-color); }
 
 /* Tools */
-.tools-section-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 25px; margin-bottom: 15px; padding-top: 15px; border-top: 1px solid var(--border);
-}
+.tools-section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; margin-bottom: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
 .tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
-.tool-btn {
-    display: flex; align-items: center; gap: 10px; padding: 12px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--border);
-    border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.85rem;
-}
+.tool-btn { display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.85rem; }
 .tool-btn:hover { background: var(--primary); border-color: var(--primary); color: white; transform: translateY(-2px); }
 
 /* Buttons */
-.btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit; }
-.btn-primary { background: var(--primary); color: white; }
-.btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
 .btn-action { padding: 5px 10px; font-size: 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; transition:0.2s; }
 .btn-action:hover { background: white; color: black; }
 .btn-danger-icon { color: #f87171; border-color: rgba(239,68,68,0.3); }
 .btn-danger-icon:hover { background: var(--danger); color: white; border-color: var(--danger); }
-.btn-sm { font-size: 0.75rem; padding: 4px 10px; }
+.btn-primary { background: var(--primary); color: white; width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; }
 
-/* Media Upload */
-.media-upload {
-  border: 2px dashed var(--border); padding: 20px; text-align: center;
-  border-radius: 8px; cursor: pointer; color: var(--text-muted);
-  transition: 0.2s; background: rgba(0,0,0,0.1); font-size: 0.9rem;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
-}
+/* Media Upload Large */
+.media-upload { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; background: rgba(0,0,0,0.1); font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .media-upload:hover { border-color: var(--primary); color: var(--primary); background: rgba(99, 102, 241, 0.05); }
+.upload-btn-mini { background: rgba(255,255,255,0.1); border: 1px dashed var(--border); color: var(--text-muted); padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px; transition: 0.2s; white-space: nowrap; }
+.item-img-preview { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; margin-right: 5px; border: 1px solid var(--border); }
 .preview-container { margin-top: 10px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); background: #000; }
 .preview-media { width: 100%; max-height: 200px; object-fit: contain; display: block; }
 .remove-media { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.9); color: white; border: none; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; z-index: 10; display:flex; justify-content:center; align-items:center; }
 
 /* Preview Area */
-.preview-area {
-  background: #050505; display: flex; flex-direction: column;
-  background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px;
-}
-.preview-toolbar {
-  background: var(--bg-panel); padding: 10px; display: flex; justify-content: center; gap: 20px;
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
+.preview-area { background: #050505; display: flex; flex-direction: column; background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px; }
+.preview-toolbar { background: var(--bg-panel); padding: 10px; display: flex; justify-content: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .device-btn { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; padding: 8px; transition: 0.2s; border-radius: 6px; }
 .device-btn.active { color: white; background: var(--primary); }
 .iframe-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 40px; overflow: hidden; }
@@ -174,77 +136,22 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .preview-frame.tablet { width: 768px; height: 90%; border-radius: 16px; border: 10px solid #1e293b; }
 .preview-frame.mobile { width: 375px; height: 85%; border-radius: 30px; border: 12px solid #1e293b; }
 
-/* Floating AI Button & Modal */
-.ai-fab {
-    position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px;
-    background: linear-gradient(135deg, #6366f1, #a855f7);
-    border-radius: 50%; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5);
-    display: flex; justify-content: center; align-items: center;
-    color: white; font-size: 1.5rem; cursor: pointer; z-index: 1000;
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    animation: float 3s ease-in-out infinite;
-}
+/* AI Elements */
+.ai-fab { position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5); display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1000; transition: transform 0.3s; animation: float 3s ease-in-out infinite; }
 .ai-fab:hover { transform: scale(1.1) rotate(10deg); }
-
-.ai-modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
-    z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s;
-    justify-content: center; align-items: center;
-}
+.ai-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; justify-content: center; align-items: center; }
 .ai-modal-overlay.active { display: flex; opacity: 1; }
-
-.ai-modal {
-    background: #1e293b; width: 90%; max-width: 500px; border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.1); padding: 30px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px);
-    transition: transform 0.3s; position: relative; overflow: hidden;
-}
+.ai-modal { background: #1e293b; width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s; }
 .ai-modal-overlay.active .ai-modal { transform: translateY(0); }
-
-.ai-input {
-    width: 100%; background: #0f172a; border: 2px solid #334155;
-    padding: 15px; border-radius: 10px; color: white; font-family: inherit;
-    font-size: 1rem; margin: 20px 0; resize: none; height: 100px;
-    transition: 0.3s;
-}
-.ai-input:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
-.ai-btn {
-    width: 100%; padding: 12px; background: linear-gradient(90deg, #6366f1, #a855f7);
-    border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem;
-    cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
-    transition: 0.3s;
-}
-.ai-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+.ai-input { width: 100%; background: #0f172a; border: 2px solid #334155; padding: 15px; border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin: 20px 0; resize: none; height: 100px; }
+.ai-btn { width: 100%; padding: 12px; background: linear-gradient(90deg, #6366f1, #a855f7); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
 .ai-close { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+.ai-suggestion { display: inline-block; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 0.8rem; margin: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
 
-.ai-suggestion {
-    display: inline-block; padding: 6px 12px; background: rgba(255,255,255,0.05);
-    border-radius: 20px; font-size: 0.8rem; margin: 5px; cursor: pointer;
-    border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; transition: 0.2s;
-}
-.ai-suggestion:hover { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: white; }
-
-/* Loading & Toast */
-#global-spinner {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999;
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    color: white; font-size: 1.2rem;
-}
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 12px 30px; border-radius: 50px; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 2002; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+#toast.error { background: var(--danger); }
+#global-spinner { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
 .spinner-icon { font-size: 3rem; animation: spin 1s linear infinite; color: var(--primary); margin-bottom: 15px; }
-
-.toast {
-  position: fixed; bottom: 20px; right: 20px;
-  background: var(--success); color: white;
-  padding: 12px 30px; border-radius: 50px;
-  font-weight: bold; font-size: 0.95rem;
-  opacity: 0; transition: 0.3s; pointer-events: none;
-  z-index: 10002; box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  display: flex; align-items: center; gap: 10px;
-}
-.toast.error { background: var(--danger); }
-
-/* Debug Log (Hidden) */
-#debug-log { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 150px; background: #000; color: #0f0; padding: 10px; overflow: auto; z-index: 20000; font-size: 10px; direction: ltr; }
 
 @media (max-width: 1024px) { .app-layout { grid-template-columns: 1fr; } .preview-area { display: none; } .ai-fab { bottom: 20px; left: 20px; } }
 @keyframes float { 0%, 100% {transform: translateY(0)} 50% {transform: translateY(-10px)} }
@@ -254,40 +161,37 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 </head>
 <body>
 
-<div id="toast"><i class="fas fa-check"></i> <span>تم الحفظ</span></div>
-<div id="global-spinner"><i class="fas fa-circle-notch spinner-icon"></i><div id="spinner-text">جاري المعالجة...</div></div>
-<div id="debug-log"></div>
+<div class="ai-fab" onclick="toggleAI()" title="توليد موقع كامل"><i class="fas fa-wand-magic-sparkles"></i></div>
 
-<!-- AI Modal -->
-<div class="ai-fab" onclick="toggleAI()"><i class="fas fa-wand-magic-sparkles"></i></div>
+<!-- AI Modal for Full Site Generation -->
 <div class="ai-modal-overlay" id="aiModal">
     <div class="ai-modal">
         <button class="ai-close" onclick="toggleAI()"><i class="fas fa-times"></i></button>
         <div style="text-align:center">
             <i class="fas fa-brain" style="font-size:3rem; color:#a855f7; margin-bottom:15px"></i>
-            <h2 style="margin:0; font-size:1.5rem">Gemma Intelligence</h2>
-            <p style="color:#94a3b8; font-size:0.9rem; margin-top:5px">صف الموقع الذي تريده وسأقوم ببنائه وتنسيقه فوراً.</p>
+            <h2 style="margin:0; font-size:1.5rem">المساعد الذكي</h2>
+            <p style="color:#94a3b8; font-size:0.9rem; margin-top:5px">صف الموقع الذي تريده وسأقوم ببنائه بالكامل.</p>
         </div>
-        <textarea id="aiPrompt" class="ai-input" placeholder="مثال: موقع لشركة سياحة، ألوان زرقاء وبرتقالية، يحتوي على عروض وباقات سفر..."></textarea>
+        <textarea id="aiPrompt" class="ai-input" placeholder="مثال: موقع لمطعم مأكولات بحرية، ألوان زرقاء، يحتوي على قائمة طعام وقسم تواصل اجتماعي..."></textarea>
         <div style="margin-bottom:20px; text-align:center">
             <span class="ai-suggestion" onclick="setPrompt('موقع لشركة مقاولات حديثة')">🏗️ مقاولات</span>
-            <span class="ai-suggestion" onclick="setPrompt('مطعم برجر عصري وقائمة طعام')">🍔 مطعم</span>
-            <span class="ai-suggestion" onclick="setPrompt('عيادة أسنان وحجز مواعيد')">🦷 عيادة</span>
+            <span class="ai-suggestion" onclick="setPrompt('مطعم برجر عصري')">🍔 مطعم</span>
+            <span class="ai-suggestion" onclick="setPrompt('متجر إلكتروني لبيع الأحذية')">👟 متجر</span>
         </div>
-        <button class="ai-btn" onclick="generateSiteAI()" id="aiBtn"><i class="fas fa-bolt"></i> توليد الموقع</button>
+        <button class="ai-btn" onclick="generateSiteAI()" id="aiBtn"><i class="fas fa-bolt"></i> توليد الموقع الآن</button>
         <div id="ai-loading-text" style="display:none; text-align:center; margin-top:10px; color:#a855f7; font-size:0.9rem"><i class="fas fa-circle-notch fa-spin"></i> جاري الاتصال...</div>
     </div>
 </div>
 
+<div id="global-spinner"><i class="fas fa-circle-notch spinner-icon"></i><div id="spinner-text">جاري المعالجة...</div></div>
+<div id="toast"><i class="fas fa-check"></i> <span>تم الحفظ</span></div>
+
 <div class="app-layout">
-  <!-- Sidebar -->
   <aside class="control-panel">
     <div class="panel-header">
-      <div class="brand"><i class="fas fa-layer-group"></i> Gemma Studio <small style="opacity:0.5; margin-right:5px; margin-left:5px">v21 Pro</small></div>
+      <div class="brand"><i class="fas fa-layer-group"></i> Gemma Studio <small style="opacity:0.5; margin-right:5px; font-size:0.7em">v23 Max</small></div>
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
-
-    <!-- Tabs -->
     <div class="sticky-tabs">
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('content')"><i class="fas fa-pen"></i> المحتوى</button>
@@ -296,8 +200,6 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
             <button class="nav-tab" onclick="switchTab('export')"><i class="fas fa-file-code"></i> تصدير</button>
         </div>
     </div>
-
-    <!-- Content Area -->
     <div class="scroll-area">
       <!-- 1. CONTENT -->
       <div id="tab-content" class="tab-content active">
@@ -307,526 +209,304 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
             <button class="btn-action btn-sm" onclick="toggleAllCards(false)"><i class="fas fa-compress-alt"></i> طي الكل</button>
         </div>
         <div class="tools-grid">
-            <button class="tool-btn" onclick="addSection('hero')"><i class="fas fa-desktop"></i> واجهة</button>
-            <button class="tool-btn" onclick="addSection('features')"><i class="fas fa-th-large"></i> مميزات</button>
-            <button class="tool-btn" onclick="addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
-            <button class="tool-btn" onclick="addSection('gallery')"><i class="fas fa-images"></i> معرض</button>
-            <button class="tool-btn" onclick="addSection('text')"><i class="fas fa-align-left"></i> نص</button>
-            <button class="tool-btn" onclick="addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
-            <button class="tool-btn" onclick="addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
-            <button class="tool-btn" onclick="addSection('links')"><i class="fas fa-link"></i> روابط</button>
+            <button class="tool-btn" onclick="window.addSection('hero')"><i class="fas fa-desktop"></i> واجهة</button>
+            <button class="tool-btn" onclick="window.addSection('features')"><i class="fas fa-th-large"></i> مميزات</button>
+            <button class="tool-btn" onclick="window.addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
+            <button class="tool-btn" onclick="window.addSection('gallery')"><i class="fas fa-images"></i> معرض</button>
+            <button class="tool-btn" onclick="window.addSection('text')"><i class="fas fa-align-left"></i> نص</button>
+            <button class="tool-btn" onclick="window.addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
+            <button class="tool-btn" onclick="window.addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
+            <button class="tool-btn" onclick="window.addSection('links')"><i class="fas fa-link"></i> روابط</button>
         </div>
       </div>
-
       <!-- 2. DESIGN -->
       <div id="tab-design" class="tab-content">
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">🎨 الهوية البصرية</div>
-            <div class="card-body open">
-                <div class="form-group">
-                    <label class="form-label">نوع الخط</label>
-                    <select class="form-control" id="font" onchange="updateStyle('font', this.value)">
-                        <option value="'Tajawal', sans-serif">Tajawal (عصري)</option>
-                        <option value="'Cairo', sans-serif">Cairo (رسمي)</option>
-                        <option value="'Changa', sans-serif">Changa (إعلاني)</option>
-                        <option value="sans-serif">System Default</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <div><label class="form-label">اللون الرئيسي</label><input type="color" class="form-control" id="primaryColor" oninput="updateStyle('primaryColor', this.value)"></div>
-                    <div><label class="form-label">اللون الثانوي</label><input type="color" class="form-control" id="secondaryColor" oninput="updateStyle('secondaryColor', this.value)"></div>
-                </div>
-                <div class="form-row">
-                    <div><label class="form-label">خلفية الموقع</label><input type="color" class="form-control" id="bgColor" oninput="updateStyle('bgColor', this.value)"></div>
-                    <div><label class="form-label">لون النصوص</label><input type="color" class="form-control" id="textColor" oninput="updateStyle('textColor', this.value)"></div>
-                </div>
-            </div>
-        </div>
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">📐 واجهة المستخدم</div>
-            <div class="card-body open">
-                <div class="form-group">
-                    <label class="form-label">انحناء الحواف (Border Radius)</label>
-                    <input type="range" min="0" max="30" id="radius" oninput="updateStyle('radius', this.value)">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">عرض المحتوى (Container)</label>
-                    <select class="form-control" id="containerWidth" onchange="updateStyle('containerWidth', this.value)">
-                        <option value="1100px">متوسط (1100px)</option>
-                        <option value="1300px">عريض (1300px)</option>
-                        <option value="100%">كامل (Full Width)</option>
-                    </select>
-                </div>
-                <div class="form-group" style="display:flex; align-items:center; gap:10px; border-top:1px solid var(--border); padding-top:10px; margin-top:10px">
-                    <input type="checkbox" id="glass" onchange="updateStyle('glass', this.checked)">
-                    <label class="form-label" style="margin:0; cursor:pointer" for="glass">تفعيل تأثير الزجاج (Glassmorphism)</label>
-                </div>
-            </div>
-        </div>
+        <div class="card"><div class="card-header" onclick="toggleCard(this)">🎨 الهوية</div><div class="card-body open">
+            <div class="form-group"><label class="form-label">الخط</label><select class="form-control" id="font" onchange="updateStyle('font', this.value)"><option value="'Tajawal', sans-serif">Tajawal</option><option value="'Cairo', sans-serif">Cairo</option><option value="'Changa', sans-serif">Changa</option><option value="sans-serif">System</option></select></div>
+            <div class="form-row"><div><label class="form-label">رئيسي</label><input type="color" class="form-control" id="primaryColor" oninput="updateStyle('primaryColor', this.value)"></div><div><label class="form-label">ثانوي</label><input type="color" class="form-control" id="secondaryColor" oninput="updateStyle('secondaryColor', this.value)"></div></div>
+            <div class="form-row"><div><label class="form-label">خلفية</label><input type="color" class="form-control" id="bgColor" oninput="updateStyle('bgColor', this.value)"></div><div><label class="form-label">نصوص</label><input type="color" class="form-control" id="textColor" oninput="updateStyle('textColor', this.value)"></div></div>
+        </div></div>
+        <div class="card"><div class="card-header" onclick="toggleCard(this)">📐 واجهة</div><div class="card-body open">
+            <div class="form-group"><label class="form-label">حواف</label><input type="range" min="0" max="30" id="radius" oninput="updateStyle('radius', this.value)"></div>
+            <div class="form-group"><label class="form-label">عرض</label><select class="form-control" id="containerWidth" onchange="updateStyle('containerWidth', this.value)"><option value="1100px">متوسط</option><option value="1300px">عريض</option><option value="100%">كامل</option></select></div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;margin-top:10px"><input type="checkbox" id="glass" onchange="updateStyle('glass', this.checked)"><label class="form-label" style="margin:0">تأثير الزجاج</label></div>
+        </div></div>
       </div>
-
       <!-- 3. SETTINGS -->
       <div id="tab-settings" class="tab-content">
-        <div class="card" style="border:1px solid var(--ai-color)">
-            <div class="card-header" onclick="toggleCard(this)" style="color:var(--ai-color)">
-                <span>🤖 إعدادات Google API</span>
-            </div>
-            <div class="card-body open">
-                <div class="form-group">
-                    <label class="form-label">مفتاح API Key</label>
-                    <input type="password" class="form-control" placeholder="Paste your Gemini API Key here..." id="geminiKey" onchange="updateSettings('apiKey', this.value)">
-                    <small style="color:var(--text-muted); font-size:0.7rem">يدعم نموذج Gemma-3-27b-it تلقائياً.</small>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-          <div class="card-header" onclick="toggleCard(this)">⚙️ إعدادات الموقع</div>
-          <div class="card-body">
-            <div class="form-group"><label class="form-label">اسم الموقع</label><input type="text" class="form-control" id="siteTitle" oninput="updateSettings('title', this.value)"></div>
-            <div class="form-group">
-                <label class="form-label">الشعار (Logo)</label>
-                <div class="media-upload" onclick="document.getElementById('logo-upload').click()">
-                    <i class="fas fa-cloud-upload-alt fa-2x"></i>
-                    <span>رفع شعار من الجهاز</span>
-                    <input type="file" id="logo-upload" style="display:none" accept="image/*" onchange="handleLogo(event)">
-                </div>
-                <div id="logo-preview-container" class="preview-container" style="display:none; height:80px; width:80px; margin:10px auto; border:none; background:transparent">
-                    <img id="logo-preview" style="width:100%; height:100%; object-fit:contain">
-                    <button class="remove-media" onclick="removeLogo()">×</button>
-                </div>
-            </div>
-            <div class="form-group"><label class="form-label">حقوق الفوتر</label><input type="text" class="form-control" id="footerText" oninput="updateSettings('footer', this.value)"></div>
-          </div>
-        </div>
-
-        <!-- RESTORED TRACKING SECTION -->
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">📈 أكواد التتبع</div>
-            <div class="card-body">
-                <div class="form-group">
-                    <label class="form-label">Google Analytics ID</label>
-                    <input type="text" class="form-control" placeholder="G-XXXXXXXX" id="gaId" oninput="updateSettings('ga_id', this.value)">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Meta Pixel ID</label>
-                    <input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)">
-                </div>
-            </div>
-        </div>
-
-        <!-- Head Code -->
-        <div class="card">
-            <div class="card-header" onclick="toggleCard(this)">💻 كود مخصص (Head)</div>
-            <div class="card-body">
-                <div class="form-group">
-                    <label class="form-label">كود CSS/JS مخصص</label>
-                    <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles here -->&#10;<style>&#10;  body { background: #000; }&#10;</style>" oninput="updateSettingsDelayed('headCode', this.value)"></textarea>
-                </div>
-            </div>
-        </div>
+        <div class="card" style="border:1px solid var(--ai-color)"><div class="card-header" onclick="toggleCard(this)" style="color:var(--ai-color)">🤖 Google API</div><div class="card-body open">
+            <div class="form-group"><label class="form-label">API Key</label><input type="password" class="form-control" placeholder="Gemini API Key..." id="geminiKey" onchange="updateSettings('apiKey', this.value)"></div>
+        </div></div>
+        <div class="card"><div class="card-header" onclick="toggleCard(this)">⚙️ الموقع</div><div class="card-body">
+            <div class="form-group"><label class="form-label">الاسم</label><input type="text" class="form-control" id="siteTitle" oninput="updateSettings('title', this.value)"></div>
+            <div class="form-group"><label class="form-label">الشعار</label><div class="media-upload" onclick="document.getElementById('logo-upload').click()"><i class="fas fa-cloud-upload-alt"></i><span>رفع</span><input type="file" id="logo-upload" style="display:none" accept="image/*" onchange="handleLogo(event)"></div><div id="logo-preview-container" class="preview-container" style="display:none;height:60px;width:60px;margin:10px auto;border:none"><img id="logo-preview" style="width:100%;height:100%;object-fit:contain"><button class="remove-media" onclick="removeLogo()">×</button></div></div>
+            <div class="form-group"><label class="form-label">الفوتر</label><input type="text" class="form-control" id="footerText" oninput="updateSettings('footer', this.value)"></div>
+        </div></div>
+        <div class="card"><div class="card-header" onclick="toggleCard(this)">📈 التتبع</div><div class="card-body">
+            <div class="form-group"><label class="form-label">Google Analytics</label><input type="text" class="form-control" placeholder="G-XXXXXXXX" id="gaId" oninput="updateSettings('ga_id', this.value)"></div>
+            <div class="form-group"><label class="form-label">Meta Pixel</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
+        </div></div>
+        <div class="card"><div class="card-header" onclick="toggleCard(this)">💻 كود</div><div class="card-body">
+            <div class="form-group"><textarea class="form-control" id="headCode" style="height:100px;font-family:monospace;direction:ltr;text-align:left" placeholder="CSS/JS..." oninput="updateSettingsDelayed('headCode', this.value)"></textarea></div>
+        </div></div>
       </div>
-
       <!-- 4. EXPORT -->
       <div id="tab-export" class="tab-content">
-        <div style="background:rgba(255,255,255,0.05); padding:20px; border-radius:10px; text-align:center; margin-bottom:15px">
-            <i class="fas fa-code fa-3x" style="color:var(--primary); margin-bottom:15px; display:block"></i>
-            <h3 style="margin:0">تصدير المشروع</h3>
-            <p style="color:var(--text-muted); font-size:0.9rem">تصدير ملف HTML نظيف ومضغوط.</p>
-        </div>
-        <button class="btn btn-primary" onclick="downloadHTML()"><i class="fas fa-download"></i> تحميل ملف HTML</button>
-        <button class="btn btn-outline" onclick="exportJSON()"><i class="fas fa-save"></i> حفظ ملف المشروع (JSON)</button>
-        <label class="btn btn-outline" style="position:relative">
-            <i class="fas fa-upload"></i> استيراد مشروع (JSON)
-            <input type="file" style="position:absolute; inset:0; opacity:0; cursor:pointer" onchange="importJSON(event)">
-        </label>
+        <button class="btn btn-primary" onclick="downloadHTML()"><i class="fas fa-download"></i> تحميل HTML</button>
+        <button class="btn btn-outline" onclick="exportJSON()"><i class="fas fa-save"></i> حفظ JSON</button>
+        <label class="btn btn-outline" style="position:relative"><i class="fas fa-upload"></i> استيراد <input type="file" style="position:absolute;inset:0;opacity:0;cursor:pointer" onchange="importJSON(event)"></label>
       </div>
-
     </div>
   </aside>
-
-  <!-- Preview Area -->
   <main class="preview-area">
     <div class="preview-toolbar">
-      <i class="fas fa-desktop device-btn active" id="btn-desktop" onclick="setDevice('desktop')" title="كمبيوتر"></i>
-      <i class="fas fa-tablet-alt device-btn" id="btn-tablet" onclick="setDevice('tablet')" title="تابلت"></i>
-      <i class="fas fa-mobile-alt device-btn" id="btn-mobile" onclick="setDevice('mobile')" title="موبايل"></i>
+      <i class="fas fa-desktop device-btn active" id="btn-desktop" onclick="setDevice('desktop')"></i>
+      <i class="fas fa-tablet-alt device-btn" id="btn-tablet" onclick="setDevice('tablet')"></i>
+      <i class="fas fa-mobile-alt device-btn" id="btn-mobile" onclick="setDevice('mobile')"></i>
     </div>
-    <div class="iframe-wrapper">
-      <iframe id="previewFrame" class="preview-frame desktop"></iframe>
-    </div>
+    <div class="iframe-wrapper"><iframe id="previewFrame" class="preview-frame desktop"></iframe></div>
   </main>
 </div>
 
 <script>
-/* =========================================
-   1. UTILITIES
-   ========================================= */
-function showToast(msg, isError = false) {
-  const t = document.getElementById('toast');
-  t.innerHTML = isError ? `<i class="fas fa-exclamation-triangle"></i> <span>${msg}</span>` : `<i class="fas fa-check"></i> <span>${msg}</span>`;
-  t.style.background = isError ? 'var(--danger)' : 'var(--success)';
-  t.style.opacity = '1'; 
-  setTimeout(() => t.style.opacity = '0', 3000);
-}
+// --- GLOBAL ERROR HANDLER ---
+window.onerror = function(msg, url, line) { showToast(`Error: ${msg}`, true); return false; };
 
-function showLoading(msg) {
-    document.getElementById('spinner-text').innerText = msg || 'جاري المعالجة...';
-    document.getElementById('global-spinner').style.display = 'flex';
-}
-function hideLoading() {
-    document.getElementById('global-spinner').style.display = 'none';
-}
+// --- UTILS ---
+function showToast(msg, err=false) { const t=document.getElementById('toast'); t.innerHTML=err?`<i class="fas fa-exclamation-triangle"></i> ${msg}`:`<i class="fas fa-check"></i> ${msg}`; t.style.background=err?'var(--danger)':'var(--success)'; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',3000); }
+function showLoading(m) { document.getElementById('spinner-text').innerText=m||'جاري...'; document.getElementById('global-spinner').style.display='flex'; }
+function hideLoading() { document.getElementById('global-spinner').style.display='none'; }
+function compressImage(f) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.readAsDataURL(f); r.onload=e=>{ const i=new Image(); i.src=e.target.result; i.onload=()=>{ const c=document.createElement('canvas'); let w=i.width, h=i.height, max=1000; if(w>max){h*=max/w;w=max;} c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.drawImage(i,0,0,w,h); resolve(c.toDataURL('image/jpeg',0.7)); }; i.onerror=reject; }; r.onerror=reject; }); }
+function safeSet(id, val) { const el = document.getElementById(id); if(el) { if(el.type === 'checkbox') el.checked = !!val; else el.value = val !== undefined ? val : ''; } }
 
-function compressImage(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1000;
-                let width = img.width;
-                let height = img.height;
-                if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-                canvas.width = width; canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7));
-            };
-            img.onerror = (err) => reject(err);
-        };
-        reader.onerror = (err) => reject(err);
-    });
-}
+// --- AI LOGIC (Unified API Call) ---
+window.toggleAI = function() { const m=document.getElementById('aiModal'); m.classList.toggle('active'); if(m.classList.contains('active')) document.getElementById('aiPrompt').focus(); }
+window.setPrompt = function(t) { document.getElementById('aiPrompt').value=t; }
 
-function logDebug(msg) {
-    const box = document.getElementById('debug-log');
-    box.style.display = 'block';
-    box.innerText += msg + "\n-----------------\n";
-    console.log(msg);
-}
-
-/* =========================================
-   2. AI LOGIC (Gemma 3)
-   ========================================= */
-function toggleAI() {
-    const el = document.getElementById('aiModal'); const fab = document.querySelector('.ai-fab');
-    if(el.classList.contains('active')) { el.classList.remove('active'); fab.style.display='flex'; setTimeout(()=>el.style.display='none', 300); }
-    else { el.style.display='flex'; setTimeout(()=>el.classList.add('active'), 10); fab.style.display='none'; document.getElementById('aiPrompt').focus(); }
-}
-function setPrompt(text) { document.getElementById('aiPrompt').value = text; document.getElementById('aiPrompt').focus(); }
-
-async function callGemini(prompt) {
+window.callGemini = async function(userPrompt, systemInstruction) {
     const key = project.settings.apiKey;
-    if(!key) { showToast("أدخل مفتاح API في الإعدادات", true); toggleAI(); switchTab('settings'); return null; }
-
+    if(!key) { showToast("أدخل مفتاح API أولاً", true); window.toggleAI(); window.switchTab('settings'); return null; }
     try {
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${key}`;
-        const finalPrompt = `
-        You are a JSON website builder. Output ONLY valid JSON.
-        User wants: "${prompt}".
+        // Combine system instruction if provided (Important for Gemma)
+        const finalPrompt = systemInstruction ? `${systemInstruction}\n\nUser Input: ${userPrompt}` : userPrompt;
         
-        Return JSON matching this schema exactly:
-        {
-          "settings": {"title": "Site Title", "footer": "Footer"},
-          "style": {"primaryColor": "#hex", "secondaryColor": "#hex", "bgColor": "#hex", "textColor": "#hex"},
-          "sections": [
-            {"id": "s1", "type": "hero", "name": "Hero", "data": {"title": "Txt", "subtitle": "Txt", "btnText": "Txt", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}},
-            {"id": "s2", "type": "features", "name": "Features", "data": {"title": "Txt", "items": [{"title": "Txt", "icon": "Emoji", "text": "Txt"}]}},
-            {"id": "s3", "type": "pricing", "name": "Pricing", "data": {"title": "Txt", "items": [{"name": "Plan", "price": "$", "features": "Txt", "link": "#"}]}}
-          ]
-        }
-        Use Arabic. High contrast colors. No markdown.
-        `;
-
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] }) 
-        });
-
+        const response = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] }) });
         const data = await response.json();
-        if(data.error) throw new Error("API Error: " + data.error.message);
+        if(data.error) throw new Error(data.error.message);
         return data.candidates[0].content.parts[0].text;
-    } catch(e) {
-        logDebug("API CALL FAILED: " + e.message);
-        showToast("فشل الاتصال: " + e.message, true);
-        return null;
-    }
+    } catch(e) { showToast("خطأ اتصال API", true); console.error(e); return null; }
 }
 
-function parseJSON(str) {
+window.parseJSON = function(str) {
     if(!str) return null;
     let s = str.substring(str.indexOf('{'), str.lastIndexOf('}')+1);
     s = s.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\*\*/g, '');
     return JSON.parse(s);
 }
 
-async function generateSiteAI() {
-    const prompt = document.getElementById('aiPrompt').value;
-    if(!prompt || prompt.length < 5) { showToast('اكتب وصفاً أطول', true); return; }
-
+// 1. Generate Full Site
+window.generateSiteAI = async function() {
+    const p = document.getElementById('aiPrompt').value;
+    if(!p) return;
     const btn = document.getElementById('aiBtn');
-    const loading = document.getElementById('ai-loading-text');
-    btn.disabled = true; loading.style.display = 'block';
-    document.getElementById('debug-log').innerText = ''; 
+    const load = document.getElementById('ai-loading-text');
+    btn.disabled=true; load.style.display='block';
+    
+    const sysPrompt = `You are a JSON website builder. Output ONLY valid JSON.
+    Return JSON matching this schema exactly:
+    { "settings": {"title": "Site Title", "footer": "Footer"}, "style": {"primaryColor": "#hex", "secondaryColor": "#hex", "bgColor": "#hex", "textColor": "#hex"}, "sections": [ {"id": "s1", "type": "hero", "name": "Hero", "data": {"title": "Txt", "subtitle": "Txt", "btnText": "Txt", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}}, {"id": "s2", "type": "features", "name": "Features", "data": {"title": "Txt", "items": [{"title": "Txt", "icon": "Emoji", "text": "Txt"}]}}, {"id": "s3", "type": "pricing", "name": "Pricing", "data": {"title": "Txt", "items": [{"name": "Plan", "price": "$", "features": "Txt", "link": "#"}]}} ] } Use Arabic.`;
 
     try {
-        const result = await callGemini(prompt);
-        if(result) {
-            const data = parseJSON(result);
+        const res = await window.callGemini(p, sysPrompt);
+        if(res) {
+            const data = window.parseJSON(res);
             if(data.settings) { project.settings.title = data.settings.title; project.settings.footer = data.settings.footer; }
-            if(data.style) { 
-                project.style.primaryColor = data.style.primaryColor || project.style.primaryColor;
-                project.style.secondaryColor = data.style.secondaryColor || project.style.secondaryColor;
-                project.style.bgColor = data.style.bgColor || project.style.bgColor;
-                project.style.textColor = data.style.textColor || project.style.textColor;
-            }
+            if(data.style) { project.style.primaryColor = data.style.primaryColor || project.style.primaryColor; project.style.secondaryColor = data.style.secondaryColor || project.style.secondaryColor; project.style.bgColor = data.style.bgColor || project.style.bgColor; project.style.textColor = data.style.textColor || project.style.textColor; }
             if(data.sections) project.sections = data.sections.map((s, i) => ({...s, id: 'ai_'+Date.now()+'_'+i, collapsed:false}));
-
-            init();
-            showToast("تم بناء الموقع بنجاح! 🚀");
-            toggleAI();
-            document.getElementById('aiPrompt').value = '';
+            window.fillInputs(); window.renderSidebar(); window.updatePreview(); window.saveData(); showToast("تم البناء بنجاح!"); window.toggleAI();
         }
-    } catch(e) {
-        logDebug("ERROR: " + e.message);
-        showToast("حدث خطأ في المعالجة (انظر السجل)", true);
-    } finally {
-        btn.disabled = false;
-        loading.style.display = 'none';
+    } catch(e) { showToast("فشل قراءة الرد", true); }
+    finally { btn.disabled=false; load.style.display='none'; }
+}
+
+// 2. Improve Specific Text (New Feature)
+window.improveText = async function(idx, key) {
+    const currentVal = project.sections[idx].data[key] || "";
+    const type = project.sections[idx].type;
+    const siteTitle = project.settings.title;
+    
+    showToast("جاري تحسين النص...", false);
+    
+    const sysPrompt = `You are a professional Arabic copywriter.
+    Task: Write a creative and engaging text for a website section.
+    Context: Section type is "${type}", Field is "${key}".
+    Website Name: "${siteTitle}".
+    Current Text: "${currentVal}".
+    Output ONLY the new Arabic text. No quotes.`;
+    
+    const newText = await window.callGemini("Improve this text", sysPrompt);
+    
+    if(newText) {
+        project.sections[idx].data[key] = newText.trim();
+        window.renderSidebar(); // Refresh UI to show new text
+        window.updatePreview();
+        window.saveData();
+        showToast("تم التحديث! ✨");
     }
 }
 
-// --- 3. CORE LOGIC ---
-
-let currentDevice = localStorage.getItem('pro_device') || 'desktop';
-let debounceTimer;
-
-const defaultState = {
-    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '', apiKey: '' },
-    style: { font: "'Tajawal', sans-serif", primaryColor: '#6366f1', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
-    sections: [
-        { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
-    ]
-};
-
-let project = JSON.parse(JSON.stringify(defaultState));
-
-function saveData() {
-    try {
-        localStorage.setItem('gemma_studio_pro_v21', JSON.stringify(project));
-        showToast("تم الحفظ تلقائياً");
-    } catch (e) {
-        if (e.name === 'QuotaExceededError') showToast("الذاكرة ممتلئة (صور كثيرة)", true);
-    }
+// --- RENDER HELPERS (New with AI buttons) ---
+function renderInputWithAI(idx, key, val, placeholder, isTextarea=false) {
+    const inputHtml = isTextarea 
+        ? `<textarea class="form-control" style="height:${key==='content'?'120px':'60px'}" oninput="updateData(${idx},'${key}',this.value)" placeholder="${placeholder}">${val}</textarea>`
+        : `<input class="form-control" value="${val}" oninput="updateData(${idx},'${key}',this.value)" placeholder="${placeholder}">`;
+        
+    return `<div style="position:relative; margin-bottom:10px">
+        <label class="form-label">${placeholder}</label>
+        ${inputHtml}
+        <button onclick="improveText(${idx}, '${key}')" title="تحسين بالذكاء الاصطناعي" class="ai-field-btn"><i class="fas fa-wand-magic-sparkles"></i></button>
+    </div>`;
 }
 
-// --- 4. UI RENDERING ---
+window.getControls = function(sec, idx) {
+    const d = sec.data; let h = '';
+    
+    if(sec.type==='hero') {
+        h += renderInputWithAI(idx, 'title', d.title, 'العنوان الرئيسي');
+        h += renderInputWithAI(idx, 'subtitle', d.subtitle, 'الوصف الفرعي', true);
+        h += `<div class="form-row"><div><label class="form-label">زر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">رابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="media-upload" onclick="document.getElementById('hero-${idx}').click()"><span>خلفية (صورة/فيديو)</span><input type="file" id="hero-${idx}" hidden accept="image/*,video/*" onchange="handleHeroMedia(event,${idx})"></div>`;
+    }
+    else if(['features','pricing','contact'].includes(sec.type)) { 
+        if(!d.items) d.items=[];
+        d.items.forEach((it,i)=> {
+            h+=`<div style="background:#0002;padding:8px;margin:5px 0;border-radius:4px;position:relative"><button onclick="removeItem(${idx},${i})" style="position:absolute;top:2px;left:2px;background:none;border:none;color:var(--danger);cursor:pointer">×</button><div class="form-row" style="margin-bottom:5px"><input class="form-control" placeholder="${sec.type==='contact'?'قيمة (رابط)':'عنوان'}" value="${it.title||it.name||it.value||''}" oninput="updateItem(${idx},${i},'title',this.value,'${sec.type}')"><input class="form-control" placeholder="${sec.type==='contact'?'نص الزر':'أيقونة/سعر'}" value="${it.text||it.price||it.label||''}" oninput="updateItem(${idx},${i},'text',this.value,'${sec.type}')"></div>${sec.type!=='contact'?`<textarea class="form-control" style="height:40px;margin-bottom:5px" placeholder="وصف" oninput="updateItem(${idx},${i},'desc',this.value,'${sec.type}')">${it.desc||it.features||''}</textarea>`:''}<div style="display:flex;justify-content:space-between;align-items:center"><input class="form-control" style="width:60%" placeholder="رابط/أيقونة" value="${it.link||it.icon||''}" oninput="updateItem(${idx},${i},'link',this.value,'${sec.type}')"><label class="upload-btn-mini" onclick="document.getElementById('itm-img-${idx}-${i}').click()">${it.image?`<img src="${it.image}" class="item-img-preview">`:'<i class="fas fa-image"></i>'}<input type="file" id="itm-img-${idx}-${i}" hidden accept="image/*" onchange="handleItemImage(event,${idx},${i})"></label></div></div>`;
+        }); 
+        h+=`<button class="btn-outline" onclick="addItem(${idx},'${sec.type}')">+ عنصر جديد</button>`; 
+    }
+    else if(sec.type==='text') {
+        h += renderInputWithAI(idx, 'title', d.title, 'العنوان');
+        h += renderInputWithAI(idx, 'content', d.content, 'المحتوى النصي', true);
+        h += `<div class="media-upload" onclick="document.getElementById('txt-img-${idx}').click()"><span>${d.image?'تغيير الصورة':'إضافة صورة جانبية'}</span>${d.image?`<img src="${d.image}" style="height:50px;margin-top:5px">`:''}<input type="file" id="txt-img-${idx}" hidden accept="image/*" onchange="handleSectionImage(event,${idx})"></div>`;
+    }
+    else if(sec.type==='gallery') {
+        h+=`<div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><span>رفع صور</span><input type="file" id="gal-${idx}" hidden multiple accept="image/*" onchange="handleGalleryUpload(event,${idx})"></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">${(d.images||[]).map((img,i)=>`<div style="position:relative"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:4px"><button onclick="removeGalleryImg(${idx},${i})" style="position:absolute;top:0;right:0;background:red;color:white;border:none;width:15px;height:15px;font-size:10px;cursor:pointer">×</button></div>`).join('')}</div>`;
+    }
+    else if(sec.type==='video') h+=`<input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"><input class="form-control" placeholder="رابط يوتيوب" value="${d.url}" oninput="updateData(${idx},'url',this.value)">`;
+    
+    return h;
+}
 
-function renderSidebar() {
-    const wrapper = document.getElementById('sections-wrapper');
-    wrapper.innerHTML = ''; 
+// --- GLOBAL ACTIONS ---
+window.addSection = function(type) {
+    let data = {}; 
+    if(type==='hero') data = { title:'عنوان', subtitle:'وصف', btnText:'زر', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
+    else if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة', icon:'⭐', text:'وصف'}] };
+    else if(type==='gallery') data = { title:'معرض', images:[] };
+    else if(type==='text') data = { title:'نص', content:'محتوى...' };
+    else if(type==='video') data = { title:'فيديو', url:'', uploadedVideo:'' };
+    else if(type==='contact') data = { title:'تواصل معنا', items: [ {label:'واتساب', value:'#', icon:'fab fa-whatsapp'}, {label:'بريد', value:'mailto:info@site.com', icon:'fas fa-envelope'} ] };
+    else if(type==='pricing') data = { title:'أسعار', items:[{name:'باقة', price:'$10', features:'ميزات', link:'#'}] };
+    else if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
+    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
+    window.renderSidebar(); window.updatePreview(); window.saveData();
+}
 
+window.updateData = function(i,k,v) { project.sections[i].data[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSecName = function(i,v) { project.sections[i].name=v; window.saveData(); }
+window.moveSection = function(i,d) { if(i+d<0||i+d>=project.sections.length)return; const t=project.sections[i]; project.sections[i]=project.sections[i+d]; project.sections[i+d]=t; window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.deleteSection = function(i) { if(confirm('حذف؟')) { project.sections.splice(i,1); window.renderSidebar(); window.updatePreview(); window.saveData(); } }
+window.addItem = function(i,t) { 
+    let item = {};
+    if(t==='pricing') item={name:'باقة', price:'$10', features:'مزايا', link:'#'};
+    else if(t==='contact') item={label:'وسيلة', value:'#', icon:'fas fa-link'};
+    else item={title:'جديد', text:'وصف', icon:'⭐'};
+    if(!project.sections[i].data.items) project.sections[i].data.items=[];
+    project.sections[i].data.items.push(item); 
+    window.renderSidebar(); window.updatePreview(); window.saveData(); 
+}
+window.updateItem = function(i,j,k,v,t) { 
+    const it=project.sections[i].data.items[j]; 
+    if(t==='pricing') { if(k==='title')it.name=v; else if(k==='text')it.price=v; else if(k==='desc')it.features=v; else it[k]=v; }
+    else if(t==='contact') { if(k==='title')it.value=v; else if(k==='text')it.label=v; else if(k==='link')it.icon=v; else it[k]=v; }
+    else { if(k==='title')it.title=v; else if(k==='text')it.icon=v; else if(k==='desc')it.text=v; else it[k]=v; }
+    window.updatePreview(); window.saveData(); 
+}
+window.removeItem = function(i,j) { project.sections[i].data.items.splice(j,1); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleHeroMedia = async function(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); if(f.type.startsWith('video')){const r=new FileReader();r.onload=res=>{project.sections[i].data.uploadedVideo=res.target.result;project.sections[i].data.uploadedBg='';hideLoading();window.updatePreview();window.saveData();};r.readAsDataURL(f);}else{const c=await compressImage(f);project.sections[i].data.uploadedBg=c;project.sections[i].data.uploadedVideo='';hideLoading();window.updatePreview();window.saveData();} }
+window.handleGalleryUpload = async function(e,i) { showLoading(); for(const f of e.target.files) project.sections[i].data.images.push(await compressImage(f)); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.removeGalleryImg = function(i,j) { project.sections[i].data.images.splice(j,1); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleLogo = async function(e) { const f=e.target.files[0]; if(f){const c=await compressImage(f); project.settings.logo=c; window.fillInputs(); window.updatePreview(); window.saveData();} }
+window.removeLogo = function() { project.settings.logo=''; window.fillInputs(); window.updatePreview(); window.saveData(); }
+window.handleItemImage = async function(e,si,ii) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[si].data.items[ii].image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleSectionImage = async function(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[i].data.image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.toggleAllCards = function(o) { project.sections.forEach(s=>s.collapsed=!o); window.renderSidebar(); }
+window.toggleCard = function(h) { h.nextElementSibling.classList.toggle('open'); }
+window.switchTab = function(id) { document.querySelectorAll('.tab-content,.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
+window.updateStyle = function(k,v) { project.style[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSettings = function(k,v) { project.settings[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSettingsDelayed = function(k,v) { clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>{project.settings[k]=v;window.updatePreview();window.saveData()},800); }
+window.resetProject = function() { if(confirm('مسح الكل؟')) { localStorage.removeItem('gemma_studio_pro_v23'); location.reload(); } }
+window.downloadHTML = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([window.generateHTML()],{type:'text/html'})); a.download='site.html'; a.click(); }
+window.exportJSON = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)],{type:'application/json'})); a.download='project.json'; a.click(); }
+window.importJSON = function(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=e=>{project=JSON.parse(e.target.result); window.init();}; r.readAsText(f);} }
+window.setDevice = function(m) { currentDevice=m; document.querySelectorAll('.device-btn').forEach(b=>b.classList.remove('active')); document.getElementById('btn-'+m).classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
+
+// --- RENDER ---
+window.renderSidebar = function() {
+    const w = document.getElementById('sections-wrapper'); w.innerHTML = '';
     project.sections.forEach((sec, idx) => {
-        const card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `
-            <div class="card-header" onclick="toggleCard(this)">
-                <span><i class="fas fa-bars drag-handle"></i> <span style="color:var(--primary); margin-left:5px">${idx+1}.</span> ${sec.name}</span>
-                <div onclick="event.stopPropagation()">
-                    <button class="btn-action" onclick="moveSection(${idx},-1)">▲</button>
-                    <button class="btn-action" onclick="moveSection(${idx},1)">▼</button>
-                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})"><i class="fas fa-times"></i></button>
-                </div>
-            </div>
-            <div class="card-body ${sec.collapsed ? '' : 'open'}">
-                <div class="form-group">
-                    <label class="form-label">اسم القسم</label>
-                    <input type="text" class="form-control" value="${sec.name}" oninput="updateSecName(${idx}, this.value)">
-                </div>
-                ${getControls(sec, idx)}
-            </div>
-        `;
-        wrapper.appendChild(card);
+        const d = document.createElement('div'); d.className = 'card';
+        d.innerHTML = `<div class="card-header" onclick="toggleCard(this)"><span>${idx+1}. ${sec.name}</span><div onclick="event.stopPropagation()"><button class="btn-action" onclick="moveSection(${idx},-1)">▲</button><button class="btn-action" onclick="moveSection(${idx},1)">▼</button><button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})">×</button></div></div><div class="card-body ${sec.collapsed?'':'open'}"><div class="form-group"><label class="form-label">الاسم</label><input class="form-control" value="${sec.name}" oninput="updateSecName(${idx},this.value)"></div>${window.getControls(sec, idx)}</div>`;
+        w.appendChild(d);
     });
 }
 
-function getControls(sec, idx) {
-    const d = sec.data;
-    let html = '';
-    if(sec.type === 'hero') {
-        html += `<div class="form-row"><div><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div><label class="form-label">المحاذاة</label><select class="form-control" onchange="updateData(${idx},'align',this.value)"><option value="center" ${d.align=='center'?'selected':''}>وسط</option><option value="right" ${d.align=='right'?'selected':''}>يمين</option></select></div></div><div class="form-group"><label class="form-label">الوصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div><div class="form-row"><div><label class="form-label">نص الزر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">الرابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="form-group"><label class="form-label">الخلفية</label><div class="media-upload" onclick="document.getElementById('hero-file-${idx}').click()"><i class="fas fa-cloud-upload-alt fa-2x"></i><span>رفع</span><input type="file" id="hero-file-${idx}" style="display:none" accept="image/*,video/*" onchange="handleHeroMedia(event, ${idx})"></div>${d.uploadedBg || d.uploadedVideo ? `<div class="preview-container">${d.uploadedVideo ? `<video src="${d.uploadedVideo}" class="preview-media" muted loop autoplay></video>` : `<img src="${d.uploadedBg}" class="preview-media">`}<button class="remove-media" onclick="clearHeroMedia(${idx})">×</button></div>` : ''}</div>`;
-    }
-    else if(['features', 'pricing', 'links'].includes(sec.type)) {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>`;
-        d.items.forEach((item, i) => {
-            html += `<div style="background:rgba(0,0,0,0.2); padding:10px; border-radius:6px; margin-bottom:8px; position:relative; border:1px solid var(--border)"><button onclick="removeItem(${idx}, ${i})" style="position:absolute; top:5px; left:5px; background:none; border:none; color:var(--danger); cursor:pointer">×</button><div class="form-row"><input class="form-control" placeholder="العنوان" value="${item.title||item.name||item.label||''}" oninput="updateItem(${idx},${i},'title',this.value,'${sec.type}')"><input class="form-control" placeholder="أيقونة/سعر" value="${item.icon||item.price||''}" oninput="updateItem(${idx},${i},'icon',this.value,'${sec.type}')"></div>${sec.type!=='links'?`<textarea class="form-control" placeholder="الوصف" style="height:50px" oninput="updateItem(${idx},${i},'text',this.value,'${sec.type}')">${item.text||item.features||''}</textarea>`:''}${sec.type!=='features'?`<input class="form-control" placeholder="الرابط" value="${item.link||item.url||'#'}" oninput="updateItem(${idx},${i},'link',this.value,'${sec.type}')" style="margin-top:5px">`:''}</div>`;
-        });
-        html += `<button class="btn-outline" onclick="addItem(${idx}, '${sec.type}')">+ إضافة</button>`;
-    }
-    else if(sec.type === 'gallery') {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><i class="fas fa-images fa-2x"></i><span>رفع صور</span><input type="file" id="gal-${idx}" multiple accept="image/*" style="display:none" onchange="handleGalleryUpload(event, ${idx})"></div><div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:5px">${(d.images||[]).map((img, i) => `<div style="position:relative; width:60px; height:60px"><img src="${img}" style="width:100%; height:100%; object-fit:cover; border-radius:4px"><button style="position:absolute; top:0; right:0; background:red; color:white; border:none; width:15px; height:15px; font-size:10px; cursor:pointer" onclick="removeGalleryImg(${idx}, ${i})">×</button></div>`).join('')}</div>`;
-    }
-    else if(sec.type === 'video') {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">رابط يوتيوب</label><input class="form-control" value="${d.url}" oninput="updateData(${idx},'url',this.value)"></div>`;
-    }
-    else if(sec.type === 'text') {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">المحتوى</label><textarea class="form-control" style="height:150px" oninput="updateData(${idx},'content',this.value)">${d.content}</textarea></div>`;
-    }
-    else if(sec.type === 'contact') {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-row"><div><label class="form-label">البريد</label><input class="form-control" value="${d.email}" oninput="updateData(${idx},'email',this.value)"></div><div><label class="form-label">الهاتف</label><input class="form-control" value="${d.phone}" oninput="updateData(${idx},'phone',this.value)"></div></div>`;
-    }
-    return html;
-}
+// --- STATE ---
+let project = {
+    settings: { title: 'موقعي', logo: '', footer: 'الحقوق محفوظة', ga_id: '', pixel_id: '', headCode: '', apiKey: '' },
+    style: { font: "'Tajawal', sans-serif", primaryColor: '#6366f1', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
+    sections: [{ id: 's1', type: 'hero', name: 'الرئيسية', data: { title: 'مرحباً بك', subtitle: 'وصف قصير', btnText: 'ابدأ', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }]
+};
+let currentDevice = 'desktop';
+let debounceTimer;
 
-// --- 5. MEDIA & ACTIONS ---
-async function handleHeroMedia(e, idx) {
-    const f = e.target.files[0]; if(!f) return;
-    showLoading();
-    if(f.type.startsWith('video')) {
-        if(f.size > 5*1024*1024) { hideLoading(); showToast('الفيديو كبير جداً', true); return; }
-        const r = new FileReader();
-        r.onload = res => { project.sections[idx].data.uploadedVideo = res.target.result; project.sections[idx].data.uploadedBg = ''; hideLoading(); renderSidebar(); updatePreview(); saveData(); };
-        r.readAsDataURL(f);
-    } else {
-        try { const c = await compressImage(f); project.sections[idx].data.uploadedBg = c; project.sections[idx].data.uploadedVideo = ''; hideLoading(); renderSidebar(); updatePreview(); saveData(); } catch(err){hideLoading(); showToast('خطأ', true);}
-    }
-}
-function clearHeroMedia(idx) { project.sections[idx].data.uploadedBg=''; project.sections[idx].data.uploadedVideo=''; renderSidebar(); updatePreview(); saveData(); }
-async function handleGalleryUpload(e, idx) {
-    const files = Array.from(e.target.files); if(!files.length) return;
-    showLoading();
-    if(!project.sections[idx].data.images) project.sections[idx].data.images = [];
-    for (const f of files) { const c = await compressImage(f); project.sections[idx].data.images.push(c); }
-    hideLoading(); renderSidebar(); updatePreview(); saveData();
-}
-function removeGalleryImg(idx, i) { project.sections[idx].data.images.splice(i, 1); renderSidebar(); updatePreview(); saveData(); }
-async function handleLogo(e) {
-    const f = e.target.files[0]; if(!f) return; showLoading();
-    try { const c = await compressImage(f); project.settings.logo = c; hideLoading(); fillInputs(); updatePreview(); saveData(); } catch(err) { hideLoading(); showToast('خطأ', true); }
-}
-function removeLogo() { project.settings.logo = ''; fillInputs(); updatePreview(); saveData(); }
-
-function addSection(type) {
-    let data = {}; 
-    if(type==='hero') data = { title:'عنوان', subtitle:'وصف', btnText:'زر', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
-    if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة', icon:'⭐', text:'وصف'}] };
-    if(type==='gallery') data = { title:'معرض', images:[] };
-    if(type==='text') data = { title:'نص', content:'محتوى...' };
-    if(type==='video') data = { title:'فيديو', url:'', uploadedVideo:'' };
-    if(type==='contact') data = { title:'اتصل', email:'@', phone:'' };
-    if(type==='pricing') data = { title:'أسعار', items:[{name:'باقة', price:'$10', features:'ميزات', link:'#'}] };
-    if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
-    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
-    renderSidebar(); updatePreview(); saveData();
-}
-
-function updateData(idx, key, val) { project.sections[idx].data[key] = val; updatePreview(); saveData(); }
-function updateSecName(idx, val) { project.sections[idx].name = val; saveData(); }
-function moveSection(idx, dir) { if(idx+dir < 0 || idx+dir >= project.sections.length) return; const t = project.sections[idx]; project.sections[idx] = project.sections[idx+dir]; project.sections[idx+dir] = t; renderSidebar(); updatePreview(); saveData(); }
-function deleteSection(idx) { if(confirm('حذف؟')) { project.sections.splice(idx,1); renderSidebar(); updatePreview(); saveData(); } }
-function toggleAllCards(open) { project.sections.forEach(s => s.collapsed = !open); renderSidebar(); }
-function updateItem(idx, i, key, val, type) {
-    let item = project.sections[idx].data.items[i];
-    if(type==='pricing' && key==='title') item.name = val;
-    else if(type==='pricing' && key==='icon') item.price = val;
-    else if(type==='pricing' && key==='text') item.features = val;
-    else if(type==='links' && key==='title') item.label = val;
-    else if(type==='links' && key==='link') item.url = val;
-    else item[key] = val;
-    updatePreview(); saveData();
-}
-function addItem(idx, type) {
-    let item = {title:'جديد', icon:'✨', text:'وصف'};
-    if(type==='pricing') item = {name:'باقة', price:'$0', features:'مزايا', link:'#'};
-    if(type==='links') item = {label:'رابط', url:'#'};
-    project.sections[idx].data.items.push(item);
-    renderSidebar(); updatePreview(); saveData();
-}
-function removeItem(idx, i) { project.sections[idx].data.items.splice(i, 1); renderSidebar(); updatePreview(); saveData(); }
-
-function updateSettingsDelayed(key, val) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => { project.settings[key] = val; updatePreview(); saveData(); }, 800); }
-function updateStyle(key, val) { project.style[key] = val; updatePreview(); saveData(); }
-function updateSettings(key, val) { project.settings[key] = val; updatePreview(); saveData(); }
-
-function switchTab(id) { document.querySelectorAll('.tab-content,.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
-function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
-function setDevice(m) { currentDevice = m; localStorage.setItem('pro_device', m); document.querySelectorAll('.device-btn').forEach(e=>e.classList.remove('active')); document.getElementById('btn-'+m).classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
-
-// --- SAFE SET (PREVENTS NULL ERROR) ---
-function safeSet(id, val) {
-    const el = document.getElementById(id);
-    if(el) {
-        if(el.type === 'checkbox') el.checked = !!val;
-        else el.value = val !== undefined ? val : '';
-    }
-}
+function saveData() { try { localStorage.setItem('gemma_studio_pro_v23', JSON.stringify(project)); } catch(e){} }
 
 function fillInputs() {
-    safeSet('font', project.style.font);
-    safeSet('primaryColor', project.style.primaryColor);
-    safeSet('secondaryColor', project.style.secondaryColor);
-    safeSet('bgColor', project.style.bgColor);
-    safeSet('textColor', project.style.textColor);
-    safeSet('radius', project.style.radius);
-    safeSet('containerWidth', project.style.containerWidth);
-    safeSet('glass', project.style.glass);
-    safeSet('siteTitle', project.settings.title);
-    safeSet('footerText', project.settings.footer);
-    
-    // Tracking IDs (Restored in HTML, so this works now)
-    safeSet('gaId', project.settings.ga_id);
-    safeSet('pixelId', project.settings.pixel_id);
-    
-    safeSet('headCode', project.settings.headCode);
-    safeSet('geminiKey', project.settings.apiKey);
-    
-    if(project.settings.logo && document.getElementById('logo-preview')) {
-        document.getElementById('logo-preview').src = project.settings.logo;
-        document.getElementById('logo-preview-container').style.display='block';
-    }
+    safeSet('font', project.style.font); safeSet('primaryColor', project.style.primaryColor); safeSet('secondaryColor', project.style.secondaryColor); safeSet('bgColor', project.style.bgColor); safeSet('textColor', project.style.textColor); safeSet('radius', project.style.radius); safeSet('containerWidth', project.style.containerWidth); safeSet('glass', project.style.glass); safeSet('siteTitle', project.settings.title); safeSet('footerText', project.settings.footer); safeSet('gaId', project.settings.ga_id); safeSet('pixelId', project.settings.pixel_id); safeSet('headCode', project.settings.headCode); safeSet('geminiKey', project.settings.apiKey); if(project.settings.logo && document.getElementById('logo-preview')) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; }
 }
 
-function generateHTML() {
+window.generateHTML = function() {
     const s=project.style, m=project.settings;
     const glass = s.glass ? `background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid #fff;` : `background:#fff;border:1px solid #eee;`;
-    let css = `:root{--p:${s.primaryColor};--s:${s.secondaryColor};--bg:${s.bgColor};--txt:${s.textColor};--r:${s.radius}px} body{font-family:${s.font};background:var(--bg);color:var(--txt);margin:0;direction:rtl} .container{max-width:${s.containerWidth};margin:0 auto;padding:40px 20px} .btn{background:var(--p);color:#fff;padding:10px 30px;border-radius:50px;text-decoration:none;display:inline-block;transition:0.3s} .btn:hover{filter:brightness(1.1)} .card-ui{${glass} padding:20px;border-radius:var(--r);text-align:center;box-shadow:0 5px 20px #0001;transition:0.3s} .card-ui:hover{transform:translateY(-5px)} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px} nav{${glass} position:sticky;top:0;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:999} .hero{padding:80px 20px;text-align:center;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;border-radius:0 0 50px 50px}`;
+    let css = `:root{--p:${s.primaryColor};--s:${s.secondaryColor};--bg:${s.bgColor};--txt:${s.textColor};--r:${s.radius}px} body{font-family:${s.font};background:var(--bg);color:var(--txt);margin:0;direction:rtl} .container{max-width:${s.containerWidth};margin:0 auto;padding:40px 20px} .btn{background:var(--p);color:#fff;padding:10px 30px;border-radius:50px;text-decoration:none;display:inline-block;transition:0.3s} .btn:hover{filter:brightness(1.1)} .card-ui{${glass} padding:20px;border-radius:var(--r);text-align:center;box-shadow:0 5px 20px #0001;transition:0.3s;position:relative;overflow:hidden} .card-ui:hover{transform:translateY(-5px)} .card-img{width:100%;height:150px;object-fit:cover;border-radius:var(--r);margin-bottom:15px} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px} nav{${glass} position:sticky;top:0;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:999} .hero{padding:80px 20px;text-align:center;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;border-radius:0 0 50px 50px}`;
     let body = `<nav><h3>${m.logo?`<img src="${m.logo}" height="30">`:''} ${m.title}</h3><a href="#contact" class="btn" style="background:#fff;color:var(--p)">تواصل</a></nav>`;
-    
     project.sections.forEach(sec => {
         const d=sec.data;
         if(sec.type==='hero') body+=`<div class="hero" style="background:${d.uploadedBg?`url(${d.uploadedBg}) center/cover`:`linear-gradient(135deg,var(--p),var(--s))`};text-align:${d.align}"><h1>${d.title}</h1><p>${d.subtitle}</p><a href="${d.btnLink}" class="btn" style="background:#fff;color:var(--p);margin-top:20px">${d.btnText}</a></div>`;
-        else if(sec.type==='features') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${d.items.map(i=>`<div class="card-ui"><div style="font-size:30px">${i.icon}</div><h3>${i.title}</h3><p>${i.text}</p></div>`).join('')}</div></div>`;
-        else if(sec.type==='pricing') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${d.items.map(i=>`<div class="card-ui" style="border-top:4px solid var(--s)"><h3>${i.name}</h3><h1 style="color:var(--p)">${i.price}</h1><p>${i.features}</p><a href="${i.link}" class="btn">اختر</a></div>`).join('')}</div></div>`;
-        else if(sec.type==='text') body+=`<div class="container"><h2>${d.title}</h2><p style="line-height:1.8">${d.content}</p></div>`;
-        else if(sec.type==='contact') body+=`<div class="container" id="contact" style="text-align:center;background:#f8fafc;padding:50px;border-radius:20px"><h2>${d.title}</h2><p>${d.email}</p><p>${d.phone}</p></div>`;
+        else if(sec.type==='features') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.items||[]).map(i=>`<div class="card-ui">${i.image?`<img src="${i.image}" class="card-img">`:`<div style="font-size:30px;margin-bottom:10px">${i.icon||'⭐'}</div>`}<h3>${i.title}</h3><p>${i.text||''}</p></div>`).join('')}</div></div>`;
+        else if(sec.type==='pricing') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.items||[]).map(i=>`<div class="card-ui" style="border-top:4px solid var(--s)">${i.image?`<img src="${i.image}" class="card-img">`:''}<h3>${i.name}</h3><h1 style="color:var(--p)">${i.price}</h1><p>${i.features}</p><a href="${i.link}" class="btn">اختر</a></div>`).join('')}</div></div>`;
+        else if(sec.type==='text') body+=`<div class="container"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:30px"> <div style="flex:1"><h2>${d.title}</h2><p style="line-height:1.8">${d.content}</p></div> ${d.image?`<div style="flex:1"><img src="${d.image}" style="width:100%;border-radius:var(--r)"></div>`:''} </div></div>`;
+        else if(sec.type==='contact') body+=`<div class="container" id="contact" style="text-align:center"><h2>${d.title}</h2><div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:20px">${(d.items||[]).map(i=>`<a href="${i.value}" class="btn" style="display:flex;align-items:center;gap:10px;background:${i.label.includes('فيسبوك')?'#1877f2':i.label.includes('واتس')?'#25d366':'#fff'};color:${i.label.includes('واتس')||i.label.includes('فيس')?'#fff':'var(--p)'};border:1px solid #eee"><i class="${i.icon}"></i> ${i.label}</a>`).join('')}</div></div>`;
         else if(sec.type==='gallery') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.images||[]).map(img=>`<img src="${img}" style="width:100%;border-radius:10px">`).join('')}</div></div>`;
     });
     body+=`<footer style="padding:40px;text-align:center;background:#1e293b;color:#fff;margin-top:50px">${m.footer}</footer>`;
-    
     return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><style>${css}${m.headCode}</style>${m.ga_id?`<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`:''}</head><body>${body}</body></html>`;
 }
 
-function updatePreview() { const f = document.getElementById('previewFrame'); if(f) f.srcdoc = generateHTML(); }
-function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()],{type:'text/html'})); a.download='site.html'; a.click(); }
-function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)],{type:'application/json'})); a.download='project.json'; a.click(); }
-function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=e=>{project=JSON.parse(e.target.result); init();}; r.readAsText(f);} }
-function resetProject() { if(confirm('هل أنت متأكد من الحذف والبدء من جديد؟')) { localStorage.removeItem('gemma_studio_pro_v21'); location.reload(); } }
+window.updatePreview = function() { const f = document.getElementById('previewFrame'); if(f) f.srcdoc = window.generateHTML(); }
 
-function init() {
-    const saved = localStorage.getItem('gemma_studio_pro_v21');
-    if (saved) { try { project = JSON.parse(saved); } catch(e) { console.error('Save Error'); } }
-    setDevice(currentDevice);
-    fillInputs();
-    renderSidebar(); 
-    updatePreview(); 
+window.init = function() {
+    const saved = localStorage.getItem('gemma_studio_pro_v23');
+    if (saved) try { project = JSON.parse(saved); } catch(e){}
+    window.setDevice(currentDevice);
+    window.fillInputs();
+    window.renderSidebar(); 
+    window.updatePreview(); 
 }
 
-window.addEventListener('DOMContentLoaded', init);
+window.addEventListener('DOMContentLoaded', window.init);
 </script>
 </body>
 </html>
