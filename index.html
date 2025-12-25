@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Builder - Diamond Edition (Enhanced UX)</title>
+<title>Pro Builder - Diamond Edition (Stable)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -52,7 +52,7 @@ body {
   display: flex; flex-direction: column;
   box-shadow: -5px 0 30px rgba(0,0,0,0.5);
   z-index: 100;
-  height: 100vh; /* Full height */
+  height: 100vh;
 }
 
 .panel-header {
@@ -60,7 +60,7 @@ body {
   background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), transparent);
   border-bottom: 1px solid var(--border);
   display: flex; justify-content: space-between; align-items: center;
-  flex-shrink: 0; /* Don't shrink */
+  flex-shrink: 0;
 }
 .brand { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
 .brand i { color: var(--secondary); }
@@ -202,7 +202,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
 
-    <!-- 2. Tabs (Fixed - IMPROVED UX) -->
+    <!-- 2. Tabs (Fixed) -->
     <div class="sticky-tabs">
         <div class="nav-tabs">
             <button class="nav-tab active" onclick="switchTab('content')"><i class="fas fa-layer-group"></i> المحتوى</button>
@@ -212,7 +212,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
         </div>
     </div>
 
-    <!-- 3. Scroll Area (Flexible) -->
+    <!-- 3. Scroll Area -->
     <div class="scroll-area">
       <!-- 1. CONTENT TAB -->
       <div id="tab-content" class="tab-content active">
@@ -220,7 +220,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
         
         <div class="tools-section-header">
             <label class="form-label" style="font-size:0.85rem; margin:0">إضافة عنصر جديد</label>
-            <button class="btn-action btn-sm" onclick="toggleAllCards(false)" title="طي الكل لسهولة الترتيب"><i class="fas fa-compress-alt"></i> طي الكل</button>
+            <button class="btn-action btn-sm" onclick="toggleAllCards(false)" title="طي الكل"><i class="fas fa-compress-alt"></i> طي الكل</button>
         </div>
         
         <div class="tools-grid">
@@ -311,14 +311,15 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
                 <div class="form-group"><label class="form-label">Meta Pixel ID</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
             </div>
         </div>
-        <!-- Head Code Section -->
+        <!-- Head Code Section (Optimized with Delay) -->
         <div class="card">
             <div class="card-header" onclick="toggleCard(this)">💻 كود مخصص (CSS/JS)</div>
             <div class="card-body open">
                 <div class="form-group">
                     <label class="form-label">كود مخصص في الرأس (Head Code)</label>
-                    <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles or scripts here -->&#10;<style>&#10;  body { background: red; }&#10;</style>" oninput="updateSettings('headCode', this.value)"></textarea>
-                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم إدراج هذا الكود داخل وسم &lt;head&gt;.</p>
+                    <!-- NOTE: Used updateSettingsDelayed here to prevent freezing -->
+                    <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles or scripts here -->&#10;<style>&#10;  body { background: red; }&#10;</style>" oninput="updateSettingsDelayed('headCode', this.value)"></textarea>
+                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم تطبيق التعديلات بعد التوقف عن الكتابة بثانية واحدة.</p>
                 </div>
             </div>
         </div>
@@ -345,9 +346,9 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
   <!-- Preview Area -->
   <main class="preview-area">
     <div class="preview-toolbar">
-      <i class="fas fa-desktop device-btn active" onclick="setDevice('desktop')" title="كمبيوتر"></i>
-      <i class="fas fa-tablet-alt device-btn" onclick="setDevice('tablet')" title="تابلت"></i>
-      <i class="fas fa-mobile-alt device-btn" onclick="setDevice('mobile')" title="موبايل"></i>
+      <i class="fas fa-desktop device-btn active" id="btn-desktop" onclick="setDevice('desktop')" title="كمبيوتر"></i>
+      <i class="fas fa-tablet-alt device-btn" id="btn-tablet" onclick="setDevice('tablet')" title="تابلت"></i>
+      <i class="fas fa-mobile-alt device-btn" id="btn-mobile" onclick="setDevice('mobile')" title="موبايل"></i>
     </div>
     <div class="iframe-wrapper">
       <iframe id="previewFrame" class="preview-frame desktop"></iframe>
@@ -357,8 +358,11 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 <script>
 /* =========================================
-   LOGIC CORE: DIAMOND MANUAL ENGINE
+   LOGIC CORE: DIAMOND STABLE ENGINE
    ========================================= */
+
+// Device State Persistance
+let currentDevice = localStorage.getItem('pro_device') || 'desktop';
 
 // Default State
 const defaultState = {
@@ -375,16 +379,20 @@ let project = JSON.parse(JSON.stringify(defaultState));
 function init() {
     const saved = localStorage.getItem('pro_diamond_manual');
     if (saved) { try { project = JSON.parse(saved); } catch(e) { console.error('Save Error'); } }
+    
+    // Apply Device State
+    setDevice(currentDevice);
+    
     fillInputs();
-    renderSidebar(); // Render UI structure
-    updatePreview(); // Render Preview Iframe
+    renderSidebar(); 
+    updatePreview(); 
 }
 
 // --- STATE MANAGEMENT ---
 
 function renderSidebar() {
     const wrapper = document.getElementById('sections-wrapper');
-    wrapper.innerHTML = ''; // Clear current
+    wrapper.innerHTML = ''; 
 
     project.sections.forEach((sec, idx) => {
         const card = document.createElement('div');
@@ -510,7 +518,7 @@ function addSection(type) {
 
     project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
     renderSidebar(); updatePreview(); saveData();
-    // Scroll smoothly to bottom
+    
     setTimeout(() => {
         const scrollArea = document.querySelector('.scroll-area');
         scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
@@ -618,6 +626,17 @@ function removeLogo() { project.settings.logo = ''; fillInputs(); updatePreview(
 // --- Globals ---
 function updateStyle(key, val) { project.style[key] = val; updatePreview(); saveData(); }
 function updateSettings(key, val) { project.settings[key] = val; updatePreview(); saveData(); }
+
+// NEW: Debounced Settings Update (Prevents freezing)
+let debounceTimer;
+function updateSettingsDelayed(key, val) {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+        project.settings[key] = val;
+        updatePreview();
+        saveData();
+    }, 1000); // Wait 1 second after typing stops
+}
 
 function fillInputs() {
     document.getElementById('font').value = project.style.font;
@@ -727,9 +746,14 @@ function updatePreview() { const f=document.getElementById('previewFrame'); if(f
 function switchTab(id) { document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
 function toggleCard(h) { 
     h.nextElementSibling.classList.toggle('open'); 
-    // Save collapsed state (simplified for UI feel, persistent storage logic can be enhanced)
 }
-function setDevice(m) { document.querySelectorAll('.device-btn').forEach(e=>e.classList.remove('active')); event.target.classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
+function setDevice(m) { 
+    currentDevice = m;
+    localStorage.setItem('pro_device', m); // Save state
+    document.querySelectorAll('.device-btn').forEach(e=>e.classList.remove('active')); 
+    document.getElementById('btn-'+m).classList.add('active'); 
+    document.getElementById('previewFrame').className='preview-frame '+m; 
+}
 function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()], {type:'text/html'})); a.download='website.html'; a.click(); }
 function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)], {type:'application/json'})); a.download='project.json'; a.click(); }
 function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=res=>{project=JSON.parse(res.target.result); init(); showToast();}; r.readAsText(f);} }
