@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Builder - Gemma AI Edition</title>
+<title>Gemma Studio Pro (v19)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -33,17 +33,19 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Scrollbar */
-::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 .app-layout {
   display: grid;
-  grid-template-columns: 450px 1fr;
+  grid-template-columns: 420px 1fr;
   height: 100vh;
 }
 
@@ -155,7 +157,6 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .preview-container { margin-top: 10px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); background: #000; }
 .preview-media { width: 100%; max-height: 200px; object-fit: contain; display: block; }
 .remove-media { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.9); color: white; border: none; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; z-index: 10; display:flex; justify-content:center; align-items:center; }
-.loading-overlay { position:absolute; inset:0; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center; color:white; font-weight:bold; z-index:5; font-size:0.9rem; }
 
 /* Preview Area */
 .preview-area {
@@ -177,7 +178,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 /* Global Overlay Spinner */
 #global-spinner {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 9999; display: none;
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none;
     flex-direction: column; justify-content: center; align-items: center; color: white;
 }
 .spinner-icon { font-size: 3rem; animation: spin 1s linear infinite; color: var(--primary); margin-bottom: 15px; }
@@ -251,13 +252,19 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 }
 .ai-suggestion:hover { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: white; }
 
-/* API Status Indicator */
-.api-status {
-    padding: 8px 12px; border-radius: 6px; font-size: 0.8rem; margin-bottom: 15px;
-    display: flex; align-items: center; gap: 8px; font-weight: bold;
+#toast {
+  position: fixed; bottom: 20px; right: 20px; 
+  background: var(--success); color: white; 
+  padding: 12px 30px; border-radius: 50px; 
+  opacity: 0; transition: 0.3s; pointer-events: none; 
+  z-index: 2002; font-weight: bold; 
+  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  display: flex; align-items: center; gap: 10px;
 }
-.api-status.local { background: rgba(59, 130, 246, 0.1); color: #60a5fa; border: 1px solid #1e3a8a; }
-.api-status.online { background: rgba(16, 185, 129, 0.1); color: #34d399; border: 1px solid #064e3b; }
+#toast.error { background: var(--danger); }
+
+/* Debug Log (Hidden) */
+#debug-log { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 150px; background: #000; color: #0f0; padding: 10px; overflow: auto; z-index: 20000; font-size: 10px; direction: ltr; }
 
 @media (max-width: 1024px) { .app-layout { grid-template-columns: 1fr; } .preview-area { display: none; } .ai-fab { bottom: 20px; left: 20px; } }
 </style>
@@ -266,37 +273,31 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 <!-- AI Elements -->
 <div class="ai-fab" onclick="toggleAI()">
-    <i class="fas fa-magic"></i>
+    <i class="fas fa-wand-magic-sparkles"></i>
 </div>
 
 <div class="ai-modal-overlay" id="aiModal">
     <div class="ai-modal">
         <button class="ai-close" onclick="toggleAI()"><i class="fas fa-times"></i></button>
         <div style="text-align:center">
-            <i class="fas fa-robot" style="font-size:3rem; color:#a855f7; margin-bottom:15px"></i>
-            <h2 style="margin:0; font-size:1.5rem">مصمم الذكاء الاصطناعي</h2>
+            <i class="fas fa-brain" style="font-size:3rem; color:#a855f7; margin-bottom:15px"></i>
+            <h2 style="margin:0; font-size:1.5rem">المساعد الذكي (Gemma 3)</h2>
             <p style="color:#94a3b8; font-size:0.9rem; margin-top:5px">صف موقعك، وسأقوم ببنائه بالكامل في ثوانٍ!</p>
-        </div>
-        
-        <div id="apiStatusIndicator" class="api-status local" style="margin-top:15px">
-            <i class="fas fa-microchip"></i> 
-            <span>الوضع الحالي: محاكاة محلية (سريع)</span>
         </div>
 
         <textarea id="aiPrompt" class="ai-input" placeholder="مثال: أريد موقع لمتجر بيع زهور، بألوان هادئة ووردية، يحتوي على معرض صور وقائمة أسعار..."></textarea>
-        
+
         <div style="margin-bottom:20px; text-align:center">
             <span class="ai-suggestion" onclick="setPrompt('موقع لشركة مقاولات حديثة، ألوان برتقالي وأسود، تصميم قوي')">🏗️ شركة مقاولات</span>
             <span class="ai-suggestion" onclick="setPrompt('مطعم برجر عصري، ألوان أحمر وأصفر، قائمة طعام جذابة')">🍔 مطعم برجر</span>
             <span class="ai-suggestion" onclick="setPrompt('عيادة أسنان احترافية، ألوان زرقاء وبيضاء، حجز مواعيد')">🦷 عيادة أسنان</span>
-            <span class="ai-suggestion" onclick="setPrompt('بورتفوليو لمصمم جرافيك، خلفية داكنة، معرض أعمال')">🎨 بورتفوليو</span>
         </div>
 
         <button class="ai-btn" onclick="generateSiteAI()" id="aiBtn">
-            <i class="fas fa-sparkles"></i> توليد الموقع الآن
+            <i class="fas fa-bolt"></i> توليد الموقع الآن
         </button>
-        <div id="ai-loading" style="display:none; text-align:center; margin-top:10px; color:#a855f7; font-size:0.9rem">
-            <i class="fas fa-circle-notch fa-spin"></i> جاري الاتصال...
+        <div id="ai-loading-text" style="display:none; text-align:center; margin-top:10px; color:#a855f7; font-size:0.9rem">
+            <i class="fas fa-circle-notch fa-spin"></i> جاري الاتصال بـ Google AI...
         </div>
     </div>
 </div>
@@ -307,15 +308,15 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
     <div id="spinner-text">جاري معالجة الملفات...</div>
 </div>
 
-<div id="toast" style="position:fixed; bottom:20px; right:20px; background:var(--success); color:white; padding:12px 30px; border-radius:6px; opacity:0; transition:0.3s; pointer-events:none; z-index:2000; font-weight:bold; box-shadow:0 10px 30px rgba(0,0,0,0.4)">تم الحفظ بنجاح</div>
-<div id="error-toast" style="position:fixed; bottom:20px; right:20px; background:var(--danger); color:white; padding:12px 30px; border-radius:6px; opacity:0; transition:0.3s; pointer-events:none; z-index:2001; font-weight:bold; box-shadow:0 10px 30px rgba(0,0,0,0.4)">خطأ</div>
+<div id="toast"><i class="fas fa-check"></i> <span>تم الحفظ</span></div>
+<div id="debug-log"></div>
 
 <div class="app-layout">
   <!-- Sidebar -->
   <aside class="control-panel">
     <!-- Header -->
     <div class="panel-header">
-      <div class="brand"><i class="fas fa-layer-group"></i> Pro Builder <small style="opacity:0.5; margin-right:5px; margin-left:5px">AI v18</small></div>
+      <div class="brand"><i class="fas fa-layer-group"></i> Gemma Studio <small style="opacity:0.5; margin-right:5px; margin-left:5px">v19 Pro</small></div>
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
 
@@ -402,20 +403,16 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
       <!-- 3. SETTINGS TAB -->
       <div id="tab-settings" class="tab-content">
-        <!-- AI Settings Section -->
+        <!-- AI Settings Section (UPDATED FOR GOOGLE) -->
         <div class="card" style="border:1px solid var(--ai-color)">
             <div class="card-header" onclick="toggleCard(this)" style="color:var(--ai-color)">
-                <span>🤖 إعدادات الذكاء الاصطناعي (API)</span>
+                <span>🤖 إعدادات Google API</span>
             </div>
             <div class="card-body open">
                 <div class="form-group">
-                    <label class="form-label">Hugging Face Token</label>
-                    <input type="password" class="form-control" placeholder="hf_xxxxxxxxxxxxxxxxxxx" id="hfToken" onchange="updateAISettings('token', this.value)">
-                    <small style="color:var(--text-muted); font-size:0.7rem">اتركه فارغاً لاستخدام المحاكي المحلي (بدون إنترنت).</small>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">رابط النموذج (Endpoint)</label>
-                    <input type="text" class="form-control" value="https://api-inference.huggingface.co/models/google/gemma-2-2b-it" id="hfEndpoint" onchange="updateAISettings('endpoint', this.value)">
+                    <label class="form-label">مفتاح API Key</label>
+                    <input type="password" class="form-control" placeholder="Paste your Gemini API Key here..." id="geminiKey" onchange="updateSettings('apiKey', this.value)">
+                    <small style="color:var(--text-muted); font-size:0.7rem">يدعم نموذج Gemma-3-27b-it تلقائياً.</small>
                 </div>
             </div>
         </div>
@@ -446,14 +443,13 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
                 <div class="form-group"><label class="form-label">Meta Pixel ID</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
             </div>
         </div>
-        <!-- Head Code with Debounce -->
+        <!-- Head Code -->
         <div class="card">
             <div class="card-header" onclick="toggleCard(this)">💻 كود مخصص (Head)</div>
             <div class="card-body">
                 <div class="form-group">
                     <label class="form-label">كود CSS/JS مخصص</label>
                     <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles here -->&#10;<style>&#10;  body { background: #000; }&#10;</style>" oninput="updateSettingsDelayed('headCode', this.value)"></textarea>
-                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم الحفظ تلقائياً بعد التوقف عن الكتابة (لمنع التهنيج).</p>
                 </div>
             </div>
         </div>
@@ -492,16 +488,15 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 <script>
 /* =========================================
-   LOGIC CORE: PRO BUILDER ULTIMATE ENGINE
+   1. UTILITIES (TOAST, LOADING, COMPRESSION)
    ========================================= */
-
-// --- 1. GLOBAL PREVIEW FUNCTION (DEFINED FIRST) ---
-function updatePreview() { 
-    const f = document.getElementById('previewFrame'); 
-    if(f) f.srcdoc = generateHTML(); 
+function showToast(msg, isError = false) {
+  const t = document.getElementById('toast');
+  t.innerHTML = isError ? `<i class="fas fa-exclamation-triangle"></i> <span>${msg}</span>` : `<i class="fas fa-check"></i> <span>${msg}</span>`;
+  t.style.background = isError ? 'var(--danger)' : 'var(--success)';
+  t.style.opacity = '1'; 
+  setTimeout(() => t.style.opacity = '0', 3000);
 }
-
-// --- 2. UTILITIES: COMPRESSION & STABILITY ---
 
 function showLoading(msg) {
     document.getElementById('spinner-text').innerText = msg || 'جاري المعالجة...';
@@ -509,13 +504,6 @@ function showLoading(msg) {
 }
 function hideLoading() {
     document.getElementById('global-spinner').style.display = 'none';
-}
-
-function showError(msg) {
-    const t = document.getElementById('error-toast');
-    t.innerText = msg;
-    t.style.opacity='1'; 
-    setTimeout(()=>t.style.opacity='0', 3000);
 }
 
 function compressImage(file) {
@@ -527,14 +515,14 @@ function compressImage(file) {
             img.src = event.target.result;
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                const MAX_WIDTH = 1200;
+                const MAX_WIDTH = 1000; // Smart resize
                 let width = img.width;
                 let height = img.height;
                 if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                 canvas.width = width; canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.7));
+                resolve(canvas.toDataURL('image/jpeg', 0.7)); // Compress to 70%
             };
             img.onerror = (err) => reject(err);
         };
@@ -542,17 +530,128 @@ function compressImage(file) {
     });
 }
 
-// --- 3. STATE MANAGEMENT ---
+function logDebug(msg) {
+    const box = document.getElementById('debug-log');
+    box.style.display = 'block';
+    box.innerText += msg + "\n-----------------\n";
+    console.log(msg);
+}
+
+/* =========================================
+   2. GOOGLE GEMINI AI LOGIC (v19)
+   ========================================= */
+function toggleAI() {
+    const el = document.getElementById('aiModal'); const fab = document.querySelector('.ai-fab');
+    if(el.classList.contains('active')) { el.classList.remove('active'); fab.style.display='flex'; setTimeout(()=>el.style.display='none', 300); }
+    else { el.style.display='flex'; setTimeout(()=>el.classList.add('active'), 10); fab.style.display='none'; document.getElementById('aiPrompt').focus(); }
+}
+function setPrompt(text) { document.getElementById('aiPrompt').value = text; document.getElementById('aiPrompt').focus(); }
+
+async function callGemini(prompt, systemInstructionText = "") {
+    const key = project.settings.apiKey;
+    if(!key) { showToast("أدخل مفتاح API في الإعدادات", true); toggleAI(); switchTab('settings'); return null; }
+
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${key}`;
+        // Fix: Combine system instructions for Gemma 3
+        const finalPrompt = systemInstructionText + "\n\nUser Request: " + prompt;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] }) 
+        });
+
+        const data = await response.json();
+        
+        if(data.error) throw new Error("API Error: " + data.error.message);
+        if (!data.candidates || !data.candidates[0].content) throw new Error("Empty Response");
+
+        return data.candidates[0].content.parts[0].text;
+    } catch(e) {
+        logDebug("API CALL FAILED: " + e.message);
+        showToast("فشل الاتصال: " + e.message, true);
+        return null;
+    }
+}
+
+// Smart Parser (The Cleaner)
+function cleanAndParseJSON(str) {
+    if(!str) return null;
+    const start = str.indexOf('{');
+    const end = str.lastIndexOf('}');
+    if (start === -1 || end === -1 || start >= end) throw new Error("No JSON found in response.");
+    
+    let jsonStr = str.substring(start, end + 1);
+    // Aggressive cleaning of comments and markdown
+    jsonStr = jsonStr.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\*\*/g, '');
+    return JSON.parse(jsonStr);
+}
+
+async function generateSiteAI() {
+    const prompt = document.getElementById('aiPrompt').value;
+    if(!prompt || prompt.length < 5) { showToast('اكتب وصفاً أطول', true); return; }
+
+    const btn = document.getElementById('aiBtn');
+    const loading = document.getElementById('ai-loading-text');
+    btn.disabled = true; loading.style.display = 'block';
+    document.getElementById('debug-log').innerText = ''; 
+
+    // Custom prompt to match THIS builder's specific data structure
+    const systemPrompt = `
+    You are a JSON generator for a website builder. Output VALID JSON ONLY.
+    No markdown. No chatter. Start with {.
+    
+    The user wants: "${prompt}".
+    
+    Generate JSON matching this EXACT structure:
+    {
+      "settings": {"title": "Site Name", "footer": "Footer Text"},
+      "style": {"font": "'Tajawal', sans-serif", "primaryColor": "#Hex", "secondaryColor": "#Hex", "bgColor": "#Hex", "textColor": "#Hex", "radius": "10", "glass": false},
+      "sections": [
+        {"id": "s1", "type": "hero", "name": "واجهة", "data": {"title": "Txt", "subtitle": "Txt", "btnText": "Txt", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}},
+        {"id": "s2", "type": "features", "name": "ميزات", "data": {"title": "Txt", "items": [{"title": "Txt", "icon": "Emoji", "text": "Txt"}]}},
+        {"id": "s3", "type": "pricing", "name": "أسعار", "data": {"title": "Txt", "items": [{"name": "Plan", "price": "$", "features": "Txt", "link": "#"}]}}
+      ]
+    }
+    Use Arabic for content. Ensure colors are high contrast.
+    `;
+
+    try {
+        const result = await callGemini(prompt, systemPrompt);
+        
+        if(result) {
+            const data = cleanAndParseJSON(result);
+            
+            // Merge Data
+            if(data.settings) { project.settings.title = data.settings.title; project.settings.footer = data.settings.footer; }
+            if(data.style) project.style = { ...project.style, ...data.style }; // Keep existing structure
+            if(data.sections) project.sections = data.sections;
+
+            init();
+            showToast("تم بناء الموقع بنجاح! 🚀");
+            toggleAI();
+            document.getElementById('aiPrompt').value = '';
+        }
+    } catch(e) {
+        logDebug("ERROR: " + e.message);
+        showToast("حدث خطأ في المعالجة (انظر السجل)", true);
+    } finally {
+        btn.disabled = false;
+        loading.style.display = 'none';
+    }
+}
+
+// --- 3. STATE & CORE LOGIC ---
 
 let currentDevice = localStorage.getItem('pro_device') || 'desktop';
 let debounceTimer;
 
 const defaultState = {
-    ai_config: { token: '', endpoint: 'https://api-inference.huggingface.co/models/google/gemma-2-2b-it' },
-    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '' },
+    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '', apiKey: '' },
     style: { font: "'Tajawal', sans-serif", primaryColor: '#6366f1', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
     sections: [
-        { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير يوضح خدماتك.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
+        { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
     ]
 };
 
@@ -560,15 +659,12 @@ let project = JSON.parse(JSON.stringify(defaultState));
 
 function saveData() {
     try {
-        localStorage.setItem('pro_diamond_manual', JSON.stringify(project));
-        showToast();
-        updateAIStatusUI();
+        localStorage.setItem('gemma_studio_pro_v19', JSON.stringify(project));
+        showToast("تم الحفظ تلقائياً");
     } catch (e) {
-        if (e.name === 'QuotaExceededError') showError("حجم الملفات كبير جداً.");
-        else console.error(e);
+        if (e.name === 'QuotaExceededError') showToast("الذاكرة ممتلئة (صور كثيرة)", true);
     }
 }
-function showToast() { const t=document.getElementById('toast'); t.style.opacity='1'; setTimeout(()=>t.style.opacity='0', 1500); }
 
 // --- 4. UI RENDERING ---
 
@@ -583,10 +679,9 @@ function renderSidebar() {
             <div class="card-header" onclick="toggleCard(this)">
                 <span><i class="fas fa-bars drag-handle"></i> <span style="color:var(--primary); margin-left:5px">${idx+1}.</span> ${sec.name}</span>
                 <div onclick="event.stopPropagation()">
-                    <button class="btn-action" onclick="moveSection(${idx},-1)" title="أعلى">▲</button>
-                    <button class="btn-action" onclick="moveSection(${idx},1)" title="أسفل">▼</button>
-                    <button class="btn-action" onclick="duplicateSection(${idx})" title="تكرار"><i class="far fa-copy"></i></button>
-                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})" title="حذف"><i class="fas fa-times"></i></button>
+                    <button class="btn-action" onclick="moveSection(${idx},-1)">▲</button>
+                    <button class="btn-action" onclick="moveSection(${idx},1)">▼</button>
+                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})"><i class="fas fa-times"></i></button>
                 </div>
             </div>
             <div class="card-body ${sec.collapsed ? '' : 'open'}">
@@ -604,9 +699,9 @@ function renderSidebar() {
 function getControls(sec, idx) {
     const d = sec.data;
     let html = '';
-    // Same Controls logic as previous version (Abbreviated for clarity, but logic remains)
+    // Compact controls
     if(sec.type === 'hero') {
-        html += `<div class="form-row"><div><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div><label class="form-label">المحاذاة</label><select class="form-control" onchange="updateData(${idx},'align',this.value)"><option value="center" ${d.align=='center'?'selected':''}>وسط</option><option value="right" ${d.align=='right'?'selected':''}>يمين</option></select></div></div><div class="form-group"><label class="form-label">الوصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div><div class="form-row"><div><label class="form-label">نص الزر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">الرابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="form-row"><div><label class="form-label">الارتفاع</label><input type="range" min="50" max="100" value="${parseInt(d.height)}" oninput="updateData(${idx},'height',this.value+'vh')"></div><div><label class="form-label">تظليل</label><input type="range" min="0" max="0.9" step="0.1" value="${d.overlay}" oninput="updateData(${idx},'overlay',this.value)"></div></div><div class="form-group"><label class="form-label">الخلفية</label><div class="media-upload" onclick="document.getElementById('hero-file-${idx}').click()"><i class="fas fa-cloud-upload-alt fa-2x"></i><span>رفع</span><input type="file" id="hero-file-${idx}" style="display:none" accept="image/*,video/*" onchange="handleHeroMedia(event, ${idx})"></div>${d.uploadedBg || d.uploadedVideo ? `<div class="preview-container">${d.uploadedVideo ? `<video src="${d.uploadedVideo}" class="preview-media" muted loop autoplay></video>` : `<img src="${d.uploadedBg}" class="preview-media">`}<button class="remove-media" onclick="clearHeroMedia(${idx})">×</button></div>` : ''}</div>`;
+        html += `<div class="form-row"><div><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div><label class="form-label">المحاذاة</label><select class="form-control" onchange="updateData(${idx},'align',this.value)"><option value="center" ${d.align=='center'?'selected':''}>وسط</option><option value="right" ${d.align=='right'?'selected':''}>يمين</option></select></div></div><div class="form-group"><label class="form-label">الوصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div><div class="form-row"><div><label class="form-label">نص الزر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">الرابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="form-group"><label class="form-label">الخلفية</label><div class="media-upload" onclick="document.getElementById('hero-file-${idx}').click()"><i class="fas fa-cloud-upload-alt fa-2x"></i><span>رفع</span><input type="file" id="hero-file-${idx}" style="display:none" accept="image/*,video/*" onchange="handleHeroMedia(event, ${idx})"></div>${d.uploadedBg || d.uploadedVideo ? `<div class="preview-container">${d.uploadedVideo ? `<video src="${d.uploadedVideo}" class="preview-media" muted loop autoplay></video>` : `<img src="${d.uploadedBg}" class="preview-media">`}<button class="remove-media" onclick="clearHeroMedia(${idx})">×</button></div>` : ''}</div>`;
     }
     else if(['features', 'pricing', 'links'].includes(sec.type)) {
         html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div>`;
@@ -616,7 +711,7 @@ function getControls(sec, idx) {
         html += `<button class="btn-outline" onclick="addItem(${idx}, '${sec.type}')">+ إضافة</button>`;
     }
     else if(sec.type === 'gallery') {
-        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><i class="fas fa-images fa-2x"></i><span>رفع صور</span><input type="file" id="gal-${idx}" multiple accept="image/*" style="display:none" onchange="handleGalleryUpload(event, ${idx})"></div><div class="gallery-grid">${(d.images||[]).map((img, i) => `<div class="gallery-item"><img src="${img}"><button onclick="removeGalleryImg(${idx}, ${i})"><i class="fas fa-trash"></i></button></div>`).join('')}</div>`;
+        html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><i class="fas fa-images fa-2x"></i><span>رفع صور</span><input type="file" id="gal-${idx}" multiple accept="image/*" style="display:none" onchange="handleGalleryUpload(event, ${idx})"></div><div style="display:flex; gap:5px; flex-wrap:wrap; margin-top:5px">${(d.images||[]).map((img, i) => `<div style="position:relative; width:60px; height:60px"><img src="${img}" style="width:100%; height:100%; object-fit:cover; border-radius:4px"><button style="position:absolute; top:0; right:0; background:red; color:white; border:none; width:15px; height:15px; font-size:10px; cursor:pointer" onclick="removeGalleryImg(${idx}, ${i})">×</button></div>`).join('')}</div>`;
     }
     else if(sec.type === 'video') {
         html += `<div class="form-group"><label class="form-label">العنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">رابط يوتيوب</label><input class="form-control" value="${d.url}" oninput="updateData(${idx},'url',this.value)"></div>`;
@@ -630,16 +725,17 @@ function getControls(sec, idx) {
     return html;
 }
 
-// --- 5. MEDIA & ACTIONS (Standard) ---
+// --- 5. MEDIA & ACTIONS ---
 async function handleHeroMedia(e, idx) {
     const f = e.target.files[0]; if(!f) return;
     showLoading();
     if(f.type.startsWith('video')) {
+        if(f.size > 5*1024*1024) { hideLoading(); showToast('الفيديو كبير جداً', true); return; }
         const r = new FileReader();
         r.onload = res => { project.sections[idx].data.uploadedVideo = res.target.result; project.sections[idx].data.uploadedBg = ''; hideLoading(); renderSidebar(); updatePreview(); saveData(); };
         r.readAsDataURL(f);
     } else {
-        try { const c = await compressImage(f); project.sections[idx].data.uploadedBg = c; project.sections[idx].data.uploadedVideo = ''; hideLoading(); renderSidebar(); updatePreview(); saveData(); } catch(err){hideLoading(); showError('خطأ');}
+        try { const c = await compressImage(f); project.sections[idx].data.uploadedBg = c; project.sections[idx].data.uploadedVideo = ''; hideLoading(); renderSidebar(); updatePreview(); saveData(); } catch(err){hideLoading(); showToast('خطأ', true);}
     }
 }
 function clearHeroMedia(idx) { project.sections[idx].data.uploadedBg=''; project.sections[idx].data.uploadedVideo=''; renderSidebar(); updatePreview(); saveData(); }
@@ -653,19 +749,19 @@ async function handleGalleryUpload(e, idx) {
 function removeGalleryImg(idx, i) { project.sections[idx].data.images.splice(i, 1); renderSidebar(); updatePreview(); saveData(); }
 async function handleLogo(e) {
     const f = e.target.files[0]; if(!f) return; showLoading();
-    try { const c = await compressImage(f); project.settings.logo = c; hideLoading(); fillInputs(); updatePreview(); saveData(); } catch(err) { hideLoading(); showError('خطأ'); }
+    try { const c = await compressImage(f); project.settings.logo = c; hideLoading(); fillInputs(); updatePreview(); saveData(); } catch(err) { hideLoading(); showToast('خطأ', true); }
 }
 function removeLogo() { project.settings.logo = ''; fillInputs(); updatePreview(); saveData(); }
 
 function addSection(type) {
     let data = {}; 
-    if(type==='hero') data = { title:'عنوان واجهة جذاب', subtitle:'وصف مختصر.', btnText:'تواصل معنا', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
-    if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة 1', icon:'⭐', text:'وصف الميزة'}] };
-    if(type==='gallery') data = { title:'معرض الصور', images:[] };
-    if(type==='text') data = { title:'من نحن', content:'اكتب تفاصيل المحتوى هنا...' };
-    if(type==='video') data = { title:'فيديو تعريفي', url:'', uploadedVideo:'' };
-    if(type==='contact') data = { title:'اتصل بنا', email:'info@site.com', phone:'' };
-    if(type==='pricing') data = { title:'الأسعار', items:[{name:'باقة', price:'$10', features:'ميزات...', link:'#'}] };
+    if(type==='hero') data = { title:'عنوان', subtitle:'وصف', btnText:'زر', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
+    if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة', icon:'⭐', text:'وصف'}] };
+    if(type==='gallery') data = { title:'معرض', images:[] };
+    if(type==='text') data = { title:'نص', content:'محتوى...' };
+    if(type==='video') data = { title:'فيديو', url:'', uploadedVideo:'' };
+    if(type==='contact') data = { title:'اتصل', email:'@', phone:'' };
+    if(type==='pricing') data = { title:'أسعار', items:[{name:'باقة', price:'$10', features:'ميزات', link:'#'}] };
     if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
     project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
     renderSidebar(); updatePreview(); saveData();
@@ -674,7 +770,6 @@ function addSection(type) {
 function updateData(idx, key, val) { project.sections[idx].data[key] = val; updatePreview(); saveData(); }
 function updateSecName(idx, val) { project.sections[idx].name = val; saveData(); }
 function moveSection(idx, dir) { if(idx+dir < 0 || idx+dir >= project.sections.length) return; const t = project.sections[idx]; project.sections[idx] = project.sections[idx+dir]; project.sections[idx+dir] = t; renderSidebar(); updatePreview(); saveData(); }
-function duplicateSection(idx) { const c = JSON.parse(JSON.stringify(project.sections[idx])); c.id = 's'+Date.now(); c.name += ' (نسخة)'; project.sections.splice(idx+1, 0, c); renderSidebar(); updatePreview(); saveData(); }
 function deleteSection(idx) { if(confirm('حذف؟')) { project.sections.splice(idx,1); renderSidebar(); updatePreview(); saveData(); } }
 function toggleAllCards(open) { project.sections.forEach(s => s.collapsed = !open); renderSidebar(); }
 function updateItem(idx, i, key, val, type) {
@@ -699,11 +794,6 @@ function removeItem(idx, i) { project.sections[idx].data.items.splice(i, 1); ren
 function updateSettingsDelayed(key, val) { clearTimeout(debounceTimer); debounceTimer = setTimeout(() => { project.settings[key] = val; updatePreview(); saveData(); }, 800); }
 function updateStyle(key, val) { project.style[key] = val; updatePreview(); saveData(); }
 function updateSettings(key, val) { project.settings[key] = val; updatePreview(); saveData(); }
-function updateAISettings(key, val) { 
-    if(!project.ai_config) project.ai_config = { token: '', endpoint: '' };
-    project.ai_config[key] = val; 
-    saveData(); 
-}
 
 function fillInputs() {
     document.getElementById('font').value = project.style.font;
@@ -719,24 +809,10 @@ function fillInputs() {
     document.getElementById('gaId').value = project.settings.ga_id;
     document.getElementById('pixelId').value = project.settings.pixel_id;
     document.getElementById('headCode').value = project.settings.headCode || '';
-    if(project.ai_config) {
-        document.getElementById('hfToken').value = project.ai_config.token || '';
-        document.getElementById('hfEndpoint').value = project.ai_config.endpoint || 'https://api-inference.huggingface.co/models/google/gemma-2-2b-it';
-    }
+    document.getElementById('geminiKey').value = project.settings.apiKey || '';
+    
     if(project.settings.logo) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; }
     else { document.getElementById('logo-preview-container').style.display='none'; }
-    updateAIStatusUI();
-}
-
-function updateAIStatusUI() {
-    const ind = document.getElementById('apiStatusIndicator');
-    if(project.ai_config && project.ai_config.token && project.ai_config.token.length > 10) {
-        ind.className = 'api-status online';
-        ind.innerHTML = '<i class="fas fa-satellite-dish"></i> <span>متصل: Gemma 2b (Hugging Face)</span>';
-    } else {
-        ind.className = 'api-status local';
-        ind.innerHTML = '<i class="fas fa-microchip"></i> <span>الوضع الحالي: محاكاة محلية (بدون API)</span>';
-    }
 }
 
 function switchTab(id) { document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
@@ -786,131 +862,20 @@ function generateHTML() {
     return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Tajawal:wght@400;700&family=Changa:wght@400;700&display=swap" rel="stylesheet">${scripts}${customHead}<style>${css}</style></head><body>${body}</body></html>`;
 }
 
+// --- ADDED MISSING FUNCTION ---
+function updatePreview() { 
+    const f = document.getElementById('previewFrame'); 
+    if(f) f.srcdoc = generateHTML(); 
+}
+
 function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()], {type:'text/html'})); a.download='website.html'; a.click(); }
 function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)], {type:'application/json'})); a.download='project.json'; a.click(); }
-function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=res=>{project=JSON.parse(res.target.result); init(); showToast();}; r.readAsText(f);} }
-function resetProject() { if(confirm('هل أنت متأكد من الحذف والبدء من جديد؟')) { localStorage.removeItem('pro_diamond_manual'); location.reload(); } }
+function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=res=>{project=JSON.parse(res.target.result); init(); showToast('تم الاستيراد');}; r.readAsText(f);} }
+function resetProject() { if(confirm('هل أنت متأكد من الحذف والبدء من جديد؟')) { localStorage.removeItem('gemma_studio_pro_v19'); location.reload(); } }
 
-// --- 7. AI INTEGRATION LOGIC (DUAL MODE: API & LOCAL) ---
-
-function toggleAI() {
-    const el = document.getElementById('aiModal'); const fab = document.querySelector('.ai-fab');
-    if(el.classList.contains('active')) { el.classList.remove('active'); fab.style.display='flex'; setTimeout(()=>el.style.display='none', 300); }
-    else { el.style.display='flex'; setTimeout(()=>el.classList.add('active'), 10); fab.style.display='none'; document.getElementById('aiPrompt').focus(); }
-}
-function setPrompt(text) { document.getElementById('aiPrompt').value = text; document.getElementById('aiPrompt').focus(); }
-
-async function generateSiteAI() {
-    const prompt = document.getElementById('aiPrompt').value;
-    if(!prompt || prompt.length < 5) { alert('الرجاء كتابة وصف أطول قليلاً'); return; }
-
-    const btn = document.getElementById('aiBtn');
-    const loading = document.getElementById('ai-loading');
-    btn.disabled = true; loading.style.display = 'block';
-
-    try {
-        let aiResult;
-        
-        // CHECK IF TOKEN EXISTS (Live Mode)
-        if(project.ai_config && project.ai_config.token && project.ai_config.token.length > 10) {
-            loading.innerHTML = '<i class="fas fa-satellite-dish fa-spin"></i> جاري الاتصال بنموذج Gemma...';
-            aiResult = await fetchGemma(prompt, project.ai_config.token, project.ai_config.endpoint);
-        } else {
-            // FALLBACK (Local Mode)
-            loading.innerHTML = '<i class="fas fa-microchip fa-spin"></i> استخدام المعالج المحلي...';
-            await new Promise(r => setTimeout(r, 1200)); // Sim delay
-            aiResult = mockGemmaIntelligence(prompt);
-        }
-
-        // Merge logic (preserve images if possible or use AI ones)
-        project.settings = aiResult.settings;
-        project.style = aiResult.style;
-        project.sections = aiResult.sections;
-        
-        init();
-        showToast();
-        toggleAI();
-        document.getElementById('aiPrompt').value = '';
-
-    } catch(e) {
-        alert('حدث خطأ: ' + e.message);
-        console.error(e);
-    } finally {
-        btn.disabled = false;
-        loading.style.display = 'none';
-    }
-}
-
-// REAL API CALL
-async function fetchGemma(prompt, token, endpoint) {
-    // We construct a prompt that forces JSON output
-    const systemPrompt = `You are a professional website builder AI. Output ONLY valid JSON matching this structure:
-    {
-      "settings": {"title": "String", "footer": "String"},
-      "style": {"font": "'Tajawal', sans-serif", "primaryColor": "Hex", "secondaryColor": "Hex", "bgColor": "Hex", "textColor": "Hex", "radius": "Number", "glass": Boolean},
-      "sections": [
-        {"id": "s1", "type": "hero", "name": "واجهة", "data": {"title": "String", "subtitle": "String", "btnText": "String", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}},
-        {"id": "s2", "type": "features", "name": "المميزات", "data": {"title": "String", "items": [{"title": "String", "icon": "Emoji", "text": "String"}]}}
-      ]
-    }
-    User Request: "${prompt}".
-    Generate Arabic content only. JSON Only. No markdown.`;
-
-    const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            inputs: systemPrompt,
-            parameters: { max_new_tokens: 2000, return_full_text: false, temperature: 0.7 }
-        })
-    });
-
-    if(!response.ok) throw new Error("API Error: " + response.statusText);
-    
-    const result = await response.json();
-    let text = result[0].generated_text;
-    
-    // Clean JSON (sometimes models add chatter)
-    const jsonStart = text.indexOf('{');
-    const jsonEnd = text.lastIndexOf('}');
-    if(jsonStart !== -1 && jsonEnd !== -1) {
-        text = text.substring(jsonStart, jsonEnd + 1);
-        return JSON.parse(text);
-    } else {
-        throw new Error("Invalid JSON from AI");
-    }
-}
-
-// LOCAL MOCK (Fallback)
-function mockGemmaIntelligence(prompt) {
-    const p = prompt.toLowerCase();
-    let theme = { title: 'موقعي الجديد', font: "'Tajawal', sans-serif", colors: ['#6366f1', '#ec4899', '#ffffff', '#1e293b'], radius: '12', glass: false, sections: [] };
-
-    if(p.includes('مطعم') || p.includes('طعام') || p.includes('food')) {
-        theme.title = 'مطعم الذواقة'; theme.colors = ['#ef4444', '#f59e0b', '#18181b', '#fef2f2'];
-        theme.sections.push({id:'s1',type:'hero',name:'واجهة',data:{title:'طعم لا يقاوم',subtitle:'أشهى المأكولات الطازجة.',btnText:'احجز',btnLink:'#',align:'center',height:'90vh',overlay:'0.5'}});
-        theme.sections.push({id:'s2',type:'features',name:'القائمة',data:{title:'أطباقنا',items:[{title:'برجر',icon:'🍔',text:'لحم طازج'},{title:'بيتزا',icon:'🍕',text:'عجينة إيطالية'}]}});
-    } 
-    else if(p.includes('شركة') || p.includes('عمار') || p.includes('construction')) {
-        theme.title = 'الإعمار الحديثة'; theme.colors = ['#f97316', '#334155', '#ffffff', '#0f172a']; theme.radius='0';
-        theme.sections.push({id:'s1',type:'hero',name:'واجهة',data:{title:'نبني المستقبل',subtitle:'شريكك في البناء.',btnText:'تواصل',btnLink:'#',align:'center',height:'80vh',overlay:'0.7'}});
-        theme.sections.push({id:'s2',type:'features',name:'خدماتنا',data:{title:'لماذا نحن',items:[{title:'دقة',icon:'🏗️',text:'جودة عالية'},{title:'احتراف',icon:'👷',text:'فريق هندسي'}]}});
-    }
-    else {
-        theme.sections.push({id:'s1',type:'hero',name:'واجهة',data:{title:'مرحبا بك',subtitle:'موقع تم إنشاؤه تلقائياً.',btnText:'المزيد',btnLink:'#',align:'center',height:'85vh',overlay:'0.6'}});
-        theme.sections.push({id:'s2',type:'features',name:'مميزات',data:{title:'خدماتنا',items:[{title:'جودة',icon:'💎',text:'خدمة مميزة'}]}});
-    }
-    return { settings: { title: theme.title, logo: '', footer: `جميع الحقوق محفوظة © ${theme.title} 2025` }, style: { font: theme.font, primaryColor: theme.colors[0], secondaryColor: theme.colors[1], bgColor: theme.colors[2], textColor: theme.colors[3], radius: theme.radius, containerWidth: '1100px', glass: theme.glass }, sections: theme.sections };
-}
-
-// --- INITIALIZATION ---
 function init() {
-    const saved = localStorage.getItem('pro_diamond_manual');
+    const saved = localStorage.getItem('gemma_studio_pro_v19');
     if (saved) { try { project = JSON.parse(saved); } catch(e) { console.error('Save Error'); } }
-    if(!project.ai_config) project.ai_config = { token: '', endpoint: '' };
     setDevice(currentDevice);
     fillInputs();
     renderSidebar(); 
