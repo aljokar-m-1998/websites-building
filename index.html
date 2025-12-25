@@ -3,26 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gemma Studio Pro (v20.1 Fixed)</title>
+<title>Gemma Studio Pro Max (v22.3)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
 /* =========================================
-   1. CORE UI (Ultimate Dark Theme)
+   CORE UI (Ultimate Dark Theme)
    ========================================= */
 :root {
   --primary: #6366f1;
-  --primary-hover: #4f46e5;
   --secondary: #ec4899;
   --bg-dark: #0f172a;
   --bg-panel: #1e293b;
-  --surface: #334155;
-  --border: #475569;
+  --border: rgba(255, 255, 255, 0.1);
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --danger: #ef4444;
   --success: #10b981;
-  --ai-color: #8b5cf6;
 }
 
 * { box-sizing: border-box; outline: none; }
@@ -37,16 +34,11 @@ body {
   flex-direction: column;
 }
 
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
 ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-.app-layout {
-  display: grid;
-  grid-template-columns: 420px 1fr;
-  height: 100vh;
-}
+.app-layout { display: grid; grid-template-columns: 420px 1fr; flex: 1; overflow: hidden; }
 
 /* Sidebar */
 .control-panel {
@@ -63,23 +55,16 @@ body {
   background: rgba(0,0,0,0.2);
   border-bottom: 1px solid var(--border);
   display: flex; justify-content: space-between; align-items: center;
-  flex-shrink: 0;
 }
 .brand { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
 
-.sticky-tabs {
-  padding: 10px 15px;
-  background: var(--bg-panel);
-  border-bottom: 1px solid var(--border);
-  flex-shrink: 0;
-}
+.sticky-tabs { padding: 10px 15px; background: var(--bg-panel); border-bottom: 1px solid var(--border); }
 .nav-tabs { display: flex; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 8px; border: 1px solid var(--border); gap: 4px; }
 .nav-tab {
   flex: 1; background: transparent; border: none; color: var(--text-muted);
   padding: 8px; cursor: pointer; border-radius: 6px; font-weight: 600; font-family: inherit; transition: 0.2s; font-size: 0.8rem;
   display: flex; align-items: center; justify-content: center; gap: 5px;
 }
-.nav-tab:hover { background: rgba(255,255,255,0.05); color: white; }
 .nav-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
 
 .scroll-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 80px; }
@@ -88,17 +73,14 @@ body {
 
 /* Components */
 .card { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; transition: border 0.3s; }
-.card:hover { border-color: rgba(255,255,255,0.2); }
 .card-header {
   padding: 12px 15px; background: rgba(255,255,255,0.03); cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
   font-weight: 600; font-size: 0.9rem; user-select: none;
 }
-.card-header:hover { background: rgba(255,255,255,0.08); }
 .card-body { padding: 15px; border-top: 1px solid var(--border); display: none; background: rgba(0,0,0,0.2); }
 .card-body.open { display: block; }
 
-/* Forms */
 .form-group { margin-bottom: 12px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
 .form-label { display: block; margin-bottom: 5px; font-size: 0.75rem; color: var(--text-muted); font-weight: bold; }
@@ -109,7 +91,16 @@ body {
 }
 .form-control:focus { border-color: var(--primary); background: rgba(0,0,0,0.5); }
 input[type="color"] { padding: 0; height: 38px; cursor: pointer; border:none; border-radius:4px; overflow:hidden; }
-input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary); }
+
+/* Upload Button Mini */
+.upload-btn-mini {
+    background: rgba(255,255,255,0.1); border: 1px dashed var(--border);
+    color: var(--text-muted); padding: 5px 10px; border-radius: 4px;
+    cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 5px;
+    transition: 0.2s; white-space: nowrap;
+}
+.upload-btn-mini:hover { background: var(--primary); color: white; border-color: var(--primary); }
+.item-img-preview { width: 30px; height: 30px; border-radius: 4px; object-fit: cover; margin-right: 5px; border: 1px solid var(--border); }
 
 /* Tools */
 .tools-section-header { display: flex; justify-content: space-between; align-items: center; margin-top: 25px; margin-bottom: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
@@ -117,24 +108,22 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .tool-btn { display: flex; align-items: center; gap: 10px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.85rem; }
 .tool-btn:hover { background: var(--primary); border-color: var(--primary); color: white; transform: translateY(-2px); }
 
-.btn { width: 100%; padding: 10px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 5px; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit; }
-.btn-primary { background: var(--primary); color: white; }
-.btn-primary:hover { background: var(--primary-hover); }
-.btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
-.btn-outline:hover { border-color: var(--text-main); color: var(--text-main); background: rgba(255,255,255,0.05); }
+/* Buttons */
 .btn-action { padding: 5px 10px; font-size: 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; transition:0.2s; }
 .btn-action:hover { background: white; color: black; }
 .btn-danger-icon { color: #f87171; border-color: rgba(239,68,68,0.3); }
 .btn-danger-icon:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-primary { background: var(--primary); color: white; width: 100%; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
+.btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); width: 100%; padding: 10px; border-radius: 6px; cursor: pointer; }
 
-/* Media */
+/* Media Upload Large */
 .media-upload { border: 2px dashed var(--border); padding: 20px; text-align: center; border-radius: 8px; cursor: pointer; color: var(--text-muted); transition: 0.2s; background: rgba(0,0,0,0.1); font-size: 0.9rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
 .media-upload:hover { border-color: var(--primary); color: var(--primary); background: rgba(99, 102, 241, 0.05); }
 .preview-container { margin-top: 10px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); background: #000; }
 .preview-media { width: 100%; max-height: 200px; object-fit: contain; display: block; }
 .remove-media { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.9); color: white; border: none; width: 28px; height: 28px; border-radius: 4px; cursor: pointer; z-index: 10; display:flex; justify-content:center; align-items:center; }
 
-/* Preview */
+/* Preview Area */
 .preview-area { background: #050505; display: flex; flex-direction: column; background-image: radial-gradient(#1f2937 1px, transparent 1px); background-size: 20px 20px; }
 .preview-toolbar { background: var(--bg-panel); padding: 10px; display: flex; justify-content: center; gap: 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .device-btn { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; padding: 8px; transition: 0.2s; border-radius: 6px; }
@@ -146,26 +135,21 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .preview-frame.mobile { width: 375px; height: 85%; border-radius: 30px; border: 12px solid #1e293b; }
 
 /* AI Elements */
-.ai-fab { position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5); display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1000; transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); animation: float 3s ease-in-out infinite; }
+.ai-fab { position: fixed; bottom: 30px; left: 30px; width: 60px; height: 60px; background: linear-gradient(135deg, #6366f1, #a855f7); border-radius: 50%; box-shadow: 0 10px 25px rgba(99, 102, 241, 0.5); display: flex; justify-content: center; align-items: center; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1000; transition: transform 0.3s; animation: float 3s ease-in-out infinite; }
 .ai-fab:hover { transform: scale(1.1) rotate(10deg); }
 .ai-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 2000; display: none; opacity: 0; transition: opacity 0.3s; justify-content: center; align-items: center; }
 .ai-modal-overlay.active { display: flex; opacity: 1; }
-.ai-modal { background: #1e293b; width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s; position: relative; overflow: hidden; }
+.ai-modal { background: #1e293b; width: 90%; max-width: 500px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); padding: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); transform: translateY(20px); transition: transform 0.3s; }
 .ai-modal-overlay.active .ai-modal { transform: translateY(0); }
-.ai-input { width: 100%; background: #0f172a; border: 2px solid #334155; padding: 15px; border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin: 20px 0; resize: none; height: 100px; transition: 0.3s; }
-.ai-input:focus { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.2); }
-.ai-btn { width: 100%; padding: 12px; background: linear-gradient(90deg, #6366f1, #a855f7); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
-.ai-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
-.ai-suggestion { display: inline-block; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 0.8rem; margin: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; transition: 0.2s; }
-.ai-suggestion:hover { background: rgba(168, 85, 247, 0.2); border-color: #a855f7; color: white; }
+.ai-input { width: 100%; background: #0f172a; border: 2px solid #334155; padding: 15px; border-radius: 10px; color: white; font-family: inherit; font-size: 1rem; margin: 20px 0; resize: none; height: 100px; }
+.ai-btn { width: 100%; padding: 12px; background: linear-gradient(90deg, #6366f1, #a855f7); border: none; border-radius: 8px; color: white; font-weight: bold; font-size: 1rem; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
 .ai-close { position: absolute; top: 15px; left: 15px; background: none; border: none; color: #94a3b8; font-size: 1.2rem; cursor: pointer; }
+.ai-suggestion { display: inline-block; padding: 6px 12px; background: rgba(255,255,255,0.05); border-radius: 20px; font-size: 0.8rem; margin: 5px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); color: #cbd5e1; }
 
-/* Feedback */
+#toast { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 12px 30px; border-radius: 50px; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 2002; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+#toast.error { background: var(--danger); }
 #global-spinner { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; color: white; }
 .spinner-icon { font-size: 3rem; animation: spin 1s linear infinite; color: var(--primary); margin-bottom: 15px; }
-#toast { position: fixed; bottom: 20px; right: 20px; background: var(--success); color: white; padding: 12px 30px; border-radius: 50px; opacity: 0; transition: 0.3s; pointer-events: none; z-index: 2002; font-weight: bold; box-shadow: 0 10px 30px rgba(0,0,0,0.4); display: flex; align-items: center; gap: 10px; }
-#toast.error { background: var(--danger); }
-#debug-log { display: none; position: fixed; bottom: 0; left: 0; right: 0; height: 150px; background: #000; color: #0f0; padding: 10px; overflow: auto; z-index: 20000; font-size: 10px; direction: ltr; }
 
 @media (max-width: 1024px) { .app-layout { grid-template-columns: 1fr; } .preview-area { display: none; } .ai-fab { bottom: 20px; left: 20px; } }
 @keyframes float { 0%, 100% {transform: translateY(0)} 50% {transform: translateY(-10px)} }
@@ -183,13 +167,13 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
         <div style="text-align:center">
             <i class="fas fa-brain" style="font-size:3rem; color:#a855f7; margin-bottom:15px"></i>
             <h2 style="margin:0; font-size:1.5rem">المساعد الذكي</h2>
-            <p style="color:#94a3b8; font-size:0.9rem; margin-top:5px">صف موقعك وسأقوم ببنائه فوراً.</p>
+            <p style="color:#94a3b8; font-size:0.9rem; margin-top:5px">صف الموقع الذي تريده وسأقوم ببنائه بالكامل.</p>
         </div>
-        <textarea id="aiPrompt" class="ai-input" placeholder="مثال: موقع لشركة مقاولات، ألوان برتقالي وأسود، يحتوي على خدمات ومشاريع سابقة..."></textarea>
+        <textarea id="aiPrompt" class="ai-input" placeholder="مثال: موقع لمطعم مأكولات بحرية، ألوان زرقاء، يحتوي على قائمة طعام وقسم تواصل اجتماعي..."></textarea>
         <div style="margin-bottom:20px; text-align:center">
             <span class="ai-suggestion" onclick="setPrompt('موقع لشركة مقاولات حديثة')">🏗️ مقاولات</span>
-            <span class="ai-suggestion" onclick="setPrompt('مطعم برجر عصري وقائمة طعام')">🍔 مطعم</span>
-            <span class="ai-suggestion" onclick="setPrompt('عيادة أسنان وحجز مواعيد')">🦷 عيادة</span>
+            <span class="ai-suggestion" onclick="setPrompt('مطعم برجر عصري')">🍔 مطعم</span>
+            <span class="ai-suggestion" onclick="setPrompt('متجر إلكتروني لبيع الأحذية')">👟 متجر</span>
         </div>
         <button class="ai-btn" onclick="generateSiteAI()" id="aiBtn"><i class="fas fa-bolt"></i> توليد الموقع الآن</button>
         <div id="ai-loading-text" style="display:none; text-align:center; margin-top:10px; color:#a855f7; font-size:0.9rem"><i class="fas fa-circle-notch fa-spin"></i> جاري الاتصال...</div>
@@ -198,12 +182,11 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 <div id="global-spinner"><i class="fas fa-circle-notch spinner-icon"></i><div id="spinner-text">جاري المعالجة...</div></div>
 <div id="toast"><i class="fas fa-check"></i> <span>تم الحفظ</span></div>
-<div id="debug-log"></div>
 
 <div class="app-layout">
   <aside class="control-panel">
     <div class="panel-header">
-      <div class="brand"><i class="fas fa-layer-group"></i> Gemma Studio <small style="opacity:0.5; margin-right:5px">v20.1</small></div>
+      <div class="brand"><i class="fas fa-layer-group"></i> Gemma Studio <small style="opacity:0.5; margin-right:5px; font-size:0.7em">v22.3</small></div>
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
     <div class="sticky-tabs">
@@ -223,14 +206,14 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
             <button class="btn-action btn-sm" onclick="toggleAllCards(false)"><i class="fas fa-compress-alt"></i> طي الكل</button>
         </div>
         <div class="tools-grid">
-            <button class="tool-btn" onclick="addSection('hero')"><i class="fas fa-desktop"></i> واجهة</button>
-            <button class="tool-btn" onclick="addSection('features')"><i class="fas fa-th-large"></i> مميزات</button>
-            <button class="tool-btn" onclick="addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
-            <button class="tool-btn" onclick="addSection('gallery')"><i class="fas fa-images"></i> معرض</button>
-            <button class="tool-btn" onclick="addSection('text')"><i class="fas fa-align-left"></i> نص</button>
-            <button class="tool-btn" onclick="addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
-            <button class="tool-btn" onclick="addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
-            <button class="tool-btn" onclick="addSection('links')"><i class="fas fa-link"></i> روابط</button>
+            <button class="tool-btn" onclick="window.addSection('hero')"><i class="fas fa-desktop"></i> واجهة</button>
+            <button class="tool-btn" onclick="window.addSection('features')"><i class="fas fa-th-large"></i> مميزات</button>
+            <button class="tool-btn" onclick="window.addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
+            <button class="tool-btn" onclick="window.addSection('gallery')"><i class="fas fa-images"></i> معرض</button>
+            <button class="tool-btn" onclick="window.addSection('text')"><i class="fas fa-align-left"></i> نص</button>
+            <button class="tool-btn" onclick="window.addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
+            <button class="tool-btn" onclick="window.addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
+            <button class="tool-btn" onclick="window.addSection('links')"><i class="fas fa-link"></i> روابط</button>
         </div>
       </div>
       <!-- 2. DESIGN -->
@@ -256,13 +239,10 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
             <div class="form-group"><label class="form-label">الشعار</label><div class="media-upload" onclick="document.getElementById('logo-upload').click()"><i class="fas fa-cloud-upload-alt"></i><span>رفع</span><input type="file" id="logo-upload" style="display:none" accept="image/*" onchange="handleLogo(event)"></div><div id="logo-preview-container" class="preview-container" style="display:none;height:60px;width:60px;margin:10px auto;border:none"><img id="logo-preview" style="width:100%;height:100%;object-fit:contain"><button class="remove-media" onclick="removeLogo()">×</button></div></div>
             <div class="form-group"><label class="form-label">الفوتر</label><input type="text" class="form-control" id="footerText" oninput="updateSettings('footer', this.value)"></div>
         </div></div>
-        
-        <!-- Restored Tracking Section -->
         <div class="card"><div class="card-header" onclick="toggleCard(this)">📈 التتبع</div><div class="card-body">
             <div class="form-group"><label class="form-label">Google Analytics</label><input type="text" class="form-control" placeholder="G-XXXXXXXX" id="gaId" oninput="updateSettings('ga_id', this.value)"></div>
             <div class="form-group"><label class="form-label">Meta Pixel</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
         </div></div>
-
         <div class="card"><div class="card-header" onclick="toggleCard(this)">💻 كود</div><div class="card-body">
             <div class="form-group"><textarea class="form-control" id="headCode" style="height:100px;font-family:monospace;direction:ltr;text-align:left" placeholder="CSS/JS..." oninput="updateSettingsDelayed('headCode', this.value)"></textarea></div>
         </div></div>
@@ -286,87 +266,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 </div>
 
 <script>
-// --- UTILS ---
-function showToast(msg, err=false) { const t=document.getElementById('toast'); t.innerHTML=err?`<i class="fas fa-exclamation"></i> ${msg}`:`<i class="fas fa-check"></i> ${msg}`; t.style.background=err?'var(--danger)':'var(--success)'; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',3000); }
-function showLoading(m) { document.getElementById('spinner-text').innerText=m||'جاري...'; document.getElementById('global-spinner').style.display='flex'; }
-function hideLoading() { document.getElementById('global-spinner').style.display='none'; }
-function compressImage(f) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.readAsDataURL(f); r.onload=e=>{ const i=new Image(); i.src=e.target.result; i.onload=()=>{ const c=document.createElement('canvas'); let w=i.width, h=i.height, max=1000; if(w>max){h*=max/w;w=max;} c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.drawImage(i,0,0,w,h); resolve(c.toDataURL('image/jpeg',0.7)); }; i.onerror=reject; }; r.onerror=reject; }); }
-function logDebug(m) { const b=document.getElementById('debug-log'); b.style.display='block'; b.innerText+=m+"\n---\n"; console.log(m); }
-
-// --- AI LOGIC ---
-function toggleAI() { const m=document.getElementById('aiModal'); m.classList.toggle('active'); if(m.classList.contains('active')) document.getElementById('aiPrompt').focus(); }
-function setPrompt(t) { document.getElementById('aiPrompt').value=t; }
-
-async function callGemini(prompt) {
-    const key = project.settings.apiKey;
-    if(!key) { showToast("أدخل مفتاح API أولاً", true); toggleAI(); switchTab('settings'); return null; }
-    try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${key}`;
-        const finalPrompt = `
-        You are a JSON website builder. Output ONLY valid JSON.
-        User wants: "${prompt}".
-        
-        Return JSON matching this schema exactly:
-        {
-          "settings": {"title": "Site Title", "footer": "Footer"},
-          "style": {"primaryColor": "#hex", "secondaryColor": "#hex", "bgColor": "#hex", "textColor": "#hex"},
-          "sections": [
-            {"id": "s1", "type": "hero", "name": "Hero", "data": {"title": "Txt", "subtitle": "Txt", "btnText": "Txt", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}},
-            {"id": "s2", "type": "features", "name": "Features", "data": {"title": "Txt", "items": [{"title": "Txt", "icon": "Emoji", "text": "Txt"}]}},
-            {"id": "s3", "type": "pricing", "name": "Pricing", "data": {"title": "Txt", "items": [{"name": "Plan", "price": "$", "features": "Txt", "link": "#"}]}}
-          ]
-        }
-        Use Arabic. High contrast colors. No markdown.
-        `;
-        
-        const response = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] }) });
-        const data = await response.json();
-        if(data.error) throw new Error(data.error.message);
-        return data.candidates[0].content.parts[0].text;
-    } catch(e) { logDebug("API Error: "+e.message); showToast("خطأ اتصال", true); return null; }
-}
-
-function parseJSON(str) {
-    if(!str) return null;
-    let s = str.substring(str.indexOf('{'), str.lastIndexOf('}')+1);
-    s = s.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\*\*/g, '');
-    return JSON.parse(s);
-}
-
-async function generateSiteAI() {
-    const p = document.getElementById('aiPrompt').value;
-    if(!p) return;
-    const btn = document.getElementById('aiBtn');
-    const load = document.getElementById('ai-loading-text');
-    btn.disabled=true; load.style.display='block';
-    
-    try {
-        const res = await callGemini(p);
-        if(res) {
-            const data = parseJSON(res);
-            // MERGE & FORCE UPDATE
-            if(data.settings) { project.settings.title = data.settings.title; project.settings.footer = data.settings.footer; }
-            if(data.style) { 
-                project.style.primaryColor = data.style.primaryColor || project.style.primaryColor;
-                project.style.secondaryColor = data.style.secondaryColor || project.style.secondaryColor;
-                project.style.bgColor = data.style.bgColor || project.style.bgColor;
-                project.style.textColor = data.style.textColor || project.style.textColor;
-            }
-            if(data.sections) project.sections = data.sections.map((s, i) => ({...s, id: 'ai_'+Date.now()+'_'+i, collapsed:false})); // Fresh IDs
-            
-            // Immediate Update
-            fillInputs();
-            renderSidebar();
-            updatePreview();
-            saveData();
-            showToast("تم البناء بنجاح!");
-            toggleAI();
-        }
-    } catch(e) { logDebug("Parse Error: "+e.message); showToast("فشل قراءة الرد", true); }
-    finally { btn.disabled=false; load.style.display='none'; }
-}
-
-// --- CORE ---
+// --- INITIAL STATE ---
 let project = {
     settings: { title: 'موقعي', logo: '', footer: 'الحقوق محفوظة', ga_id: '', pixel_id: '', headCode: '', apiKey: '' },
     style: { font: "'Tajawal', sans-serif", primaryColor: '#6366f1', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
@@ -375,114 +275,175 @@ let project = {
 let currentDevice = 'desktop';
 let debounceTimer;
 
-function saveData() { try { localStorage.setItem('gemma_studio_pro_v20', JSON.stringify(project)); } catch(e){} }
+// --- UTILS ---
+function showToast(msg, err=false) { const t=document.getElementById('toast'); t.innerHTML=err?`<i class="fas fa-exclamation-triangle"></i> ${msg}`:`<i class="fas fa-check"></i> ${msg}`; t.style.background=err?'var(--danger)':'var(--success)'; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',3000); }
+function showLoading(m) { document.getElementById('spinner-text').innerText=m||'جاري...'; document.getElementById('global-spinner').style.display='flex'; }
+function hideLoading() { document.getElementById('global-spinner').style.display='none'; }
+function compressImage(f) { return new Promise((resolve,reject)=>{ const r=new FileReader(); r.readAsDataURL(f); r.onload=e=>{ const i=new Image(); i.src=e.target.result; i.onload=()=>{ const c=document.createElement('canvas'); let w=i.width, h=i.height, max=1000; if(w>max){h*=max/w;w=max;} c.width=w; c.height=h; const ctx=c.getContext('2d'); ctx.drawImage(i,0,0,w,h); resolve(c.toDataURL('image/jpeg',0.7)); }; i.onerror=reject; }; r.onerror=reject; }); }
+function safeSet(id, val) { const el = document.getElementById(id); if(el) { if(el.type === 'checkbox') el.checked = !!val; else el.value = val !== undefined ? val : ''; } }
 
-// --- UI ---
-function renderSidebar() {
+// --- AI LOGIC ---
+window.toggleAI = function() { const m=document.getElementById('aiModal'); m.classList.toggle('active'); if(m.classList.contains('active')) document.getElementById('aiPrompt').focus(); }
+window.setPrompt = function(t) { document.getElementById('aiPrompt').value=t; }
+
+window.callGemini = async function(prompt) {
+    const key = project.settings.apiKey;
+    if(!key) { showToast("أدخل مفتاح API أولاً", true); window.toggleAI(); window.switchTab('settings'); return null; }
+    try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${key}`;
+        const finalPrompt = `You are a JSON website builder. Output ONLY valid JSON. User wants: "${prompt}". Return JSON matching this schema: { "settings": {"title": "Site Title", "footer": "Footer"}, "style": {"primaryColor": "#hex", "secondaryColor": "#hex", "bgColor": "#hex", "textColor": "#hex"}, "sections": [ {"id": "s1", "type": "hero", "name": "Hero", "data": {"title": "Txt", "subtitle": "Txt", "btnText": "Txt", "btnLink": "#", "align": "center", "height": "90vh", "overlay": "0.5"}}, {"id": "s2", "type": "features", "name": "Features", "data": {"title": "Txt", "items": [{"title": "Txt", "icon": "Emoji", "text": "Txt"}]}}, {"id": "s3", "type": "pricing", "name": "Pricing", "data": {"title": "Txt", "items": [{"name": "Plan", "price": "$", "features": "Txt", "link": "#"}]}} ] } Use Arabic.`;
+        const response = await fetch(url, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ contents: [{ parts: [{ text: finalPrompt }] }] }) });
+        const data = await response.json();
+        if(data.error) throw new Error(data.error.message);
+        return data.candidates[0].content.parts[0].text;
+    } catch(e) { showToast("خطأ اتصال API", true); return null; }
+}
+
+window.parseJSON = function(str) {
+    if(!str) return null;
+    let s = str.substring(str.indexOf('{'), str.lastIndexOf('}')+1);
+    s = s.replace(/\/\/.*$/gm, '').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\*\*/g, '');
+    return JSON.parse(s);
+}
+
+window.generateSiteAI = async function() {
+    const p = document.getElementById('aiPrompt').value;
+    if(!p) return;
+    const btn = document.getElementById('aiBtn');
+    const load = document.getElementById('ai-loading-text');
+    btn.disabled=true; load.style.display='block';
+    try {
+        const res = await window.callGemini(p);
+        if(res) {
+            const data = window.parseJSON(res);
+            if(data.settings) { project.settings.title = data.settings.title; project.settings.footer = data.settings.footer; }
+            if(data.style) { project.style.primaryColor = data.style.primaryColor || project.style.primaryColor; project.style.secondaryColor = data.style.secondaryColor || project.style.secondaryColor; project.style.bgColor = data.style.bgColor || project.style.bgColor; project.style.textColor = data.style.textColor || project.style.textColor; }
+            if(data.sections) project.sections = data.sections.map((s, i) => ({...s, id: 'ai_'+Date.now()+'_'+i, collapsed:false}));
+            window.fillInputs(); window.renderSidebar(); window.updatePreview(); window.saveData(); showToast("تم البناء بنجاح!"); window.toggleAI();
+        }
+    } catch(e) { showToast("فشل قراءة الرد", true); }
+    finally { btn.disabled=false; load.style.display='none'; }
+}
+
+// --- RENDER & CONTROLS ---
+window.renderSidebar = function() {
     const w = document.getElementById('sections-wrapper'); w.innerHTML = '';
     project.sections.forEach((sec, idx) => {
         const d = document.createElement('div'); d.className = 'card';
-        d.innerHTML = `<div class="card-header" onclick="toggleCard(this)"><span>${idx+1}. ${sec.name}</span><div onclick="event.stopPropagation()"><button class="btn-action" onclick="moveSection(${idx},-1)">▲</button><button class="btn-action" onclick="moveSection(${idx},1)">▼</button><button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})">×</button></div></div><div class="card-body ${sec.collapsed?'':'open'}"><div class="form-group"><label class="form-label">الاسم</label><input class="form-control" value="${sec.name}" oninput="updateSecName(${idx},this.value)"></div>${getControls(sec, idx)}</div>`;
+        d.innerHTML = `<div class="card-header" onclick="toggleCard(this)"><span>${idx+1}. ${sec.name}</span><div onclick="event.stopPropagation()"><button class="btn-action" onclick="moveSection(${idx},-1)">▲</button><button class="btn-action" onclick="moveSection(${idx},1)">▼</button><button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})">×</button></div></div><div class="card-body ${sec.collapsed?'':'open'}"><div class="form-group"><label class="form-label">الاسم</label><input class="form-control" value="${sec.name}" oninput="updateSecName(${idx},this.value)"></div>${window.getControls(sec, idx)}</div>`;
         w.appendChild(d);
     });
 }
 
-function getControls(sec, idx) {
+window.getControls = function(sec, idx) {
     const d = sec.data; let h = '';
-    if(sec.type==='hero') h+=`<div class="form-group"><label class="form-label">عنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">وصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div><div class="form-row"><div><label class="form-label">زر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">رابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="media-upload" onclick="document.getElementById('hero-${idx}').click()"><span>خلفية</span><input type="file" id="hero-${idx}" hidden accept="image/*" onchange="handleHeroMedia(event,${idx})"></div>`;
-    else if(['features','pricing'].includes(sec.type)) { d.items.forEach((it,i)=> h+=`<div style="background:#0002;padding:5px;margin:5px 0"><input class="form-control" value="${it.title||it.name}" oninput="updateItem(${idx},${i},'title',this.value,'${sec.type}')"><textarea class="form-control" oninput="updateItem(${idx},${i},'text',this.value,'${sec.type}')">${it.text||it.features}</textarea></div>`); h+=`<button class="btn-outline" onclick="addItem(${idx},'${sec.type}')">+</button>`; }
-    else if(sec.type==='text') h+=`<div class="form-group"><label class="form-label">عنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><textarea class="form-control" style="height:100px" oninput="updateData(${idx},'content',this.value)">${d.content}</textarea>`;
-    else if(sec.type==='contact') h+=`<input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"><input class="form-control" value="${d.email}" oninput="updateData(${idx},'email',this.value)">`;
-    else if(sec.type==='gallery') h+=`<div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><span>صور</span><input type="file" id="gal-${idx}" hidden multiple accept="image/*" onchange="handleGalleryUpload(event,${idx})"></div>`;
+    if(sec.type==='hero') {
+        h+=`<div class="form-group"><label class="form-label">عنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">وصف</label><textarea class="form-control" oninput="updateData(${idx},'subtitle',this.value)">${d.subtitle}</textarea></div><div class="form-row"><div><label class="form-label">زر</label><input class="form-control" value="${d.btnText}" oninput="updateData(${idx},'btnText',this.value)"></div><div><label class="form-label">رابط</label><input class="form-control" value="${d.btnLink}" oninput="updateData(${idx},'btnLink',this.value)"></div></div><div class="media-upload" onclick="document.getElementById('hero-${idx}').click()"><span>خلفية (صورة/فيديو)</span><input type="file" id="hero-${idx}" hidden accept="image/*,video/*" onchange="handleHeroMedia(event,${idx})"></div>`;
+    }
+    else if(['features','pricing','contact'].includes(sec.type)) { 
+        if(!d.items) d.items=[];
+        d.items.forEach((it,i)=> {
+            h+=`<div style="background:#0002;padding:8px;margin:5px 0;border-radius:4px;position:relative"><button onclick="removeItem(${idx},${i})" style="position:absolute;top:2px;left:2px;background:none;border:none;color:var(--danger);cursor:pointer">×</button><div class="form-row" style="margin-bottom:5px"><input class="form-control" placeholder="${sec.type==='contact'?'قيمة (رابط)':'عنوان'}" value="${it.title||it.name||it.value||''}" oninput="updateItem(${idx},${i},'title',this.value,'${sec.type}')"><input class="form-control" placeholder="${sec.type==='contact'?'نص الزر':'أيقونة/سعر'}" value="${it.text||it.price||it.label||''}" oninput="updateItem(${idx},${i},'text',this.value,'${sec.type}')"></div>${sec.type!=='contact'?`<textarea class="form-control" style="height:40px;margin-bottom:5px" placeholder="وصف" oninput="updateItem(${idx},${i},'desc',this.value,'${sec.type}')">${it.desc||it.features||''}</textarea>`:''}<div style="display:flex;justify-content:space-between;align-items:center"><input class="form-control" style="width:60%" placeholder="رابط/أيقونة" value="${it.link||it.icon||''}" oninput="updateItem(${idx},${i},'link',this.value,'${sec.type}')"><label class="upload-btn-mini" onclick="document.getElementById('itm-img-${idx}-${i}').click()">${it.image?`<img src="${it.image}" class="item-img-preview">`:'<i class="fas fa-image"></i>'}<input type="file" id="itm-img-${idx}-${i}" hidden accept="image/*" onchange="handleItemImage(event,${idx},${i})"></label></div></div>`;
+        }); 
+        h+=`<button class="btn-outline" onclick="addItem(${idx},'${sec.type}')">+ عنصر جديد</button>`; 
+    }
+    else if(sec.type==='text') {
+        h+=`<div class="form-group"><label class="form-label">عنوان</label><input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"></div><div class="form-group"><label class="form-label">محتوى</label><textarea class="form-control" style="height:120px" oninput="updateData(${idx},'content',this.value)">${d.content}</textarea></div><div class="media-upload" onclick="document.getElementById('txt-img-${idx}').click()"><span>${d.image?'تغيير الصورة':'إضافة صورة'}</span>${d.image?`<img src="${d.image}" style="height:50px;margin-top:5px">`:''}<input type="file" id="txt-img-${idx}" hidden accept="image/*" onchange="handleSectionImage(event,${idx})"></div>`;
+    }
+    else if(sec.type==='gallery') {
+        h+=`<div class="media-upload" onclick="document.getElementById('gal-${idx}').click()"><span>رفع صور</span><input type="file" id="gal-${idx}" hidden multiple accept="image/*" onchange="handleGalleryUpload(event,${idx})"></div><div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:10px">${(d.images||[]).map((img,i)=>`<div style="position:relative"><img src="${img}" style="width:50px;height:50px;object-fit:cover;border-radius:4px"><button onclick="removeGalleryImg(${idx},${i})" style="position:absolute;top:0;right:0;background:red;color:white;border:none;width:15px;height:15px;font-size:10px;cursor:pointer">×</button></div>`).join('')}</div>`;
+    }
+    else if(sec.type==='video') h+=`<input class="form-control" value="${d.title}" oninput="updateData(${idx},'title',this.value)"><input class="form-control" placeholder="رابط يوتيوب" value="${d.url}" oninput="updateData(${idx},'url',this.value)">`;
     return h;
 }
 
-// --- ACTIONS ---
-function updateData(i,k,v) { project.sections[i].data[k]=v; updatePreview(); saveData(); }
-function updateSecName(i,v) { project.sections[i].name=v; saveData(); }
-function moveSection(i,d) { if(i+d<0||i+d>=project.sections.length)return; const t=project.sections[i]; project.sections[i]=project.sections[i+d]; project.sections[i+d]=t; renderSidebar(); updatePreview(); saveData(); }
-function deleteSection(i) { if(confirm('حذف؟')) { project.sections.splice(i,1); renderSidebar(); updatePreview(); saveData(); } }
-function addItem(i,t) { project.sections[i].data.items.push(t==='pricing'?{name:'جديد',price:'$0',features:'مزايا'}:{title:'جديد',text:'وصف',icon:'⭐'}); renderSidebar(); updatePreview(); saveData(); }
-function updateItem(i,j,k,v,t) { const it=project.sections[i].data.items[j]; if(t==='pricing'){if(k==='title')it.name=v;else it.features=v;}else{if(k==='title')it.title=v;else it.text=v;} updatePreview(); saveData(); }
-async function handleHeroMedia(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); const c=await compressImage(f); project.sections[i].data.uploadedBg=c; hideLoading(); updatePreview(); saveData(); }
-async function handleGalleryUpload(e,i) { showLoading(); for(const f of e.target.files) project.sections[i].data.images.push(await compressImage(f)); hideLoading(); updatePreview(); saveData(); }
-function toggleAllCards(o) { project.sections.forEach(s=>s.collapsed=!o); renderSidebar(); }
-function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
-function switchTab(id) { document.querySelectorAll('.tab-content,.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
-function updateStyle(k,v) { project.style[k]=v; updatePreview(); saveData(); }
-function updateSettings(k,v) { project.settings[k]=v; updatePreview(); saveData(); }
-function updateSettingsDelayed(k,v) { clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>{project.settings[k]=v;updatePreview();saveData()},800); }
-async function handleLogo(e) { const f=e.target.files[0]; if(f){const c=await compressImage(f); project.settings.logo=c; fillInputs(); updatePreview(); saveData();} }
-function removeLogo() { project.settings.logo=''; fillInputs(); updatePreview(); saveData(); }
-function resetProject() { if(confirm('مسح الكل؟')) { localStorage.removeItem('gemma_studio_pro_v20'); location.reload(); } }
-function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()],{type:'text/html'})); a.download='site.html'; a.click(); }
-function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)],{type:'application/json'})); a.download='project.json'; a.click(); }
-function importJSON(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=e=>{project=JSON.parse(e.target.result); init();}; r.readAsText(f);} }
-function setDevice(m) { currentDevice=m; document.querySelectorAll('.device-btn').forEach(b=>b.classList.remove('active')); document.getElementById('btn-'+m).classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
-
-function safeSet(id, val) {
-    const el = document.getElementById(id);
-    if(el) {
-        if(el.type === 'checkbox') el.checked = val;
-        else el.value = val || '';
-    }
+// --- GLOBAL ACTIONS ---
+window.addSection = function(type) {
+    let data = {}; 
+    if(type==='hero') data = { title:'عنوان', subtitle:'وصف', btnText:'زر', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
+    else if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة', icon:'⭐', text:'وصف'}] };
+    else if(type==='gallery') data = { title:'معرض', images:[] };
+    else if(type==='text') data = { title:'نص', content:'محتوى...' };
+    else if(type==='video') data = { title:'فيديو', url:'', uploadedVideo:'' };
+    else if(type==='contact') data = { title:'تواصل معنا', items: [ {label:'واتساب', value:'#', icon:'fab fa-whatsapp'}, {label:'بريد', value:'mailto:info@site.com', icon:'fas fa-envelope'} ] };
+    else if(type==='pricing') data = { title:'أسعار', items:[{name:'باقة', price:'$10', features:'ميزات', link:'#'}] };
+    else if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
+    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
+    window.renderSidebar(); window.updatePreview(); window.saveData();
 }
 
-function fillInputs() {
-    safeSet('font', project.style.font);
-    safeSet('primaryColor', project.style.primaryColor);
-    safeSet('secondaryColor', project.style.secondaryColor);
-    safeSet('bgColor', project.style.bgColor);
-    safeSet('textColor', project.style.textColor);
-    safeSet('radius', project.style.radius);
-    safeSet('containerWidth', project.style.containerWidth);
-    safeSet('glass', project.style.glass);
-    safeSet('siteTitle', project.settings.title);
-    safeSet('footerText', project.settings.footer);
-    safeSet('gaId', project.settings.ga_id);
-    safeSet('pixelId', project.settings.pixel_id);
-    safeSet('headCode', project.settings.headCode);
-    safeSet('geminiKey', project.settings.apiKey);
-    if(project.settings.logo && document.getElementById('logo-preview')) {
-        document.getElementById('logo-preview').src = project.settings.logo;
-        document.getElementById('logo-preview-container').style.display='block';
-    }
+window.updateData = function(i,k,v) { project.sections[i].data[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSecName = function(i,v) { project.sections[i].name=v; window.saveData(); }
+window.moveSection = function(i,d) { if(i+d<0||i+d>=project.sections.length)return; const t=project.sections[i]; project.sections[i]=project.sections[i+d]; project.sections[i+d]=t; window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.deleteSection = function(i) { if(confirm('حذف؟')) { project.sections.splice(i,1); window.renderSidebar(); window.updatePreview(); window.saveData(); } }
+window.addItem = function(i,t) { 
+    let item = {};
+    if(t==='pricing') item={name:'باقة', price:'$10', features:'مزايا', link:'#'};
+    else if(t==='contact') item={label:'وسيلة', value:'#', icon:'fas fa-link'};
+    else item={title:'جديد', text:'وصف', icon:'⭐'};
+    if(!project.sections[i].data.items) project.sections[i].data.items=[];
+    project.sections[i].data.items.push(item); 
+    window.renderSidebar(); window.updatePreview(); window.saveData(); 
 }
+window.updateItem = function(i,j,k,v,t) { 
+    const it=project.sections[i].data.items[j]; 
+    if(t==='pricing') { if(k==='title')it.name=v; else if(k==='text')it.price=v; else if(k==='desc')it.features=v; else it[k]=v; }
+    else if(t==='contact') { if(k==='title')it.value=v; else if(k==='text')it.label=v; else if(k==='link')it.icon=v; else it[k]=v; }
+    else { if(k==='title')it.title=v; else if(k==='text')it.icon=v; else if(k==='desc')it.text=v; else it[k]=v; }
+    window.updatePreview(); window.saveData(); 
+}
+window.removeItem = function(i,j) { project.sections[i].data.items.splice(j,1); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleHeroMedia = async function(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); if(f.type.startsWith('video')){const r=new FileReader();r.onload=res=>{project.sections[i].data.uploadedVideo=res.target.result;project.sections[i].data.uploadedBg='';hideLoading();window.updatePreview();window.saveData();};r.readAsDataURL(f);}else{const c=await compressImage(f);project.sections[i].data.uploadedBg=c;project.sections[i].data.uploadedVideo='';hideLoading();window.updatePreview();window.saveData();} }
+window.handleGalleryUpload = async function(e,i) { showLoading(); for(const f of e.target.files) project.sections[i].data.images.push(await compressImage(f)); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.removeGalleryImg = function(i,j) { project.sections[i].data.images.splice(j,1); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleLogo = async function(e) { const f=e.target.files[0]; if(f){const c=await compressImage(f); project.settings.logo=c; window.fillInputs(); window.updatePreview(); window.saveData();} }
+window.removeLogo = function() { project.settings.logo=''; window.fillInputs(); window.updatePreview(); window.saveData(); }
+window.handleItemImage = async function(e,si,ii) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[si].data.items[ii].image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.handleSectionImage = async function(e,i) { const f=e.target.files[0]; if(!f)return; showLoading(); project.sections[i].data.image=await compressImage(f); hideLoading(); window.renderSidebar(); window.updatePreview(); window.saveData(); }
+window.toggleAllCards = function(o) { project.sections.forEach(s=>s.collapsed=!o); window.renderSidebar(); }
+window.toggleCard = function(h) { h.nextElementSibling.classList.toggle('open'); }
+window.switchTab = function(id) { document.querySelectorAll('.tab-content,.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
+window.updateStyle = function(k,v) { project.style[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSettings = function(k,v) { project.settings[k]=v; window.updatePreview(); window.saveData(); }
+window.updateSettingsDelayed = function(k,v) { clearTimeout(debounceTimer); debounceTimer=setTimeout(()=>{project.settings[k]=v;window.updatePreview();window.saveData()},800); }
+window.resetProject = function() { if(confirm('مسح الكل؟')) { localStorage.removeItem('gemma_studio_pro_v22_3'); location.reload(); } }
+window.downloadHTML = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([window.generateHTML()],{type:'text/html'})); a.download='site.html'; a.click(); }
+window.exportJSON = function() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)],{type:'application/json'})); a.download='project.json'; a.click(); }
+window.importJSON = function(e) { const f=e.target.files[0]; if(f){const r=new FileReader(); r.onload=e=>{project=JSON.parse(e.target.result); window.init();}; r.readAsText(f);} }
+window.setDevice = function(m) { currentDevice=m; document.querySelectorAll('.device-btn').forEach(b=>b.classList.remove('active')); document.getElementById('btn-'+m).classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
+window.fillInputs = function() { safeSet('font', project.style.font); safeSet('primaryColor', project.style.primaryColor); safeSet('secondaryColor', project.style.secondaryColor); safeSet('bgColor', project.style.bgColor); safeSet('textColor', project.style.textColor); safeSet('radius', project.style.radius); safeSet('containerWidth', project.style.containerWidth); safeSet('glass', project.style.glass); safeSet('siteTitle', project.settings.title); safeSet('footerText', project.settings.footer); safeSet('gaId', project.settings.ga_id); safeSet('pixelId', project.settings.pixel_id); safeSet('headCode', project.settings.headCode); safeSet('geminiKey', project.settings.apiKey); if(project.settings.logo && document.getElementById('logo-preview')) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; } }
+window.saveData = function() { try { localStorage.setItem('gemma_studio_pro_v22_3', JSON.stringify(project)); } catch(e){} }
 
-function generateHTML() {
+window.generateHTML = function() {
     const s=project.style, m=project.settings;
     const glass = s.glass ? `background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);border:1px solid #fff;` : `background:#fff;border:1px solid #eee;`;
-    let css = `:root{--p:${s.primaryColor};--s:${s.secondaryColor};--bg:${s.bgColor};--txt:${s.textColor};--r:${s.radius}px} body{font-family:${s.font};background:var(--bg);color:var(--txt);margin:0;direction:rtl} .container{max-width:${s.containerWidth};margin:0 auto;padding:40px 20px} .btn{background:var(--p);color:#fff;padding:10px 30px;border-radius:50px;text-decoration:none;display:inline-block;transition:0.3s} .btn:hover{filter:brightness(1.1)} .card-ui{${glass} padding:20px;border-radius:var(--r);text-align:center;box-shadow:0 5px 20px #0001;transition:0.3s} .card-ui:hover{transform:translateY(-5px)} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px} nav{${glass} position:sticky;top:0;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:999} .hero{padding:80px 20px;text-align:center;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;border-radius:0 0 50px 50px}`;
+    let css = `:root{--p:${s.primaryColor};--s:${s.secondaryColor};--bg:${s.bgColor};--txt:${s.textColor};--r:${s.radius}px} body{font-family:${s.font};background:var(--bg);color:var(--txt);margin:0;direction:rtl} .container{max-width:${s.containerWidth};margin:0 auto;padding:40px 20px} .btn{background:var(--p);color:#fff;padding:10px 30px;border-radius:50px;text-decoration:none;display:inline-block;transition:0.3s} .btn:hover{filter:brightness(1.1)} .card-ui{${glass} padding:20px;border-radius:var(--r);text-align:center;box-shadow:0 5px 20px #0001;transition:0.3s;position:relative;overflow:hidden} .card-ui:hover{transform:translateY(-5px)} .card-img{width:100%;height:150px;object-fit:cover;border-radius:var(--r);margin-bottom:15px} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px} nav{${glass} position:sticky;top:0;padding:15px;display:flex;justify-content:space-between;align-items:center;z-index:999} .hero{padding:80px 20px;text-align:center;background:linear-gradient(135deg,var(--p),var(--s));color:#fff;border-radius:0 0 50px 50px}`;
     let body = `<nav><h3>${m.logo?`<img src="${m.logo}" height="30">`:''} ${m.title}</h3><a href="#contact" class="btn" style="background:#fff;color:var(--p)">تواصل</a></nav>`;
-    
     project.sections.forEach(sec => {
         const d=sec.data;
         if(sec.type==='hero') body+=`<div class="hero" style="background:${d.uploadedBg?`url(${d.uploadedBg}) center/cover`:`linear-gradient(135deg,var(--p),var(--s))`};text-align:${d.align}"><h1>${d.title}</h1><p>${d.subtitle}</p><a href="${d.btnLink}" class="btn" style="background:#fff;color:var(--p);margin-top:20px">${d.btnText}</a></div>`;
-        else if(sec.type==='features') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${d.items.map(i=>`<div class="card-ui"><div style="font-size:30px">${i.icon}</div><h3>${i.title}</h3><p>${i.text}</p></div>`).join('')}</div></div>`;
-        else if(sec.type==='pricing') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${d.items.map(i=>`<div class="card-ui" style="border-top:4px solid var(--s)"><h3>${i.name}</h3><h1 style="color:var(--p)">${i.price}</h1><p>${i.features}</p><a href="${i.link}" class="btn">اختر</a></div>`).join('')}</div></div>`;
-        else if(sec.type==='text') body+=`<div class="container"><h2>${d.title}</h2><p style="line-height:1.8">${d.content}</p></div>`;
-        else if(sec.type==='contact') body+=`<div class="container" id="contact" style="text-align:center;background:#f8fafc;padding:50px;border-radius:20px"><h2>${d.title}</h2><p>${d.email}</p><p>${d.phone}</p></div>`;
+        else if(sec.type==='features') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.items||[]).map(i=>`<div class="card-ui">${i.image?`<img src="${i.image}" class="card-img">`:`<div style="font-size:30px;margin-bottom:10px">${i.icon||'⭐'}</div>`}<h3>${i.title}</h3><p>${i.text||''}</p></div>`).join('')}</div></div>`;
+        else if(sec.type==='pricing') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.items||[]).map(i=>`<div class="card-ui" style="border-top:4px solid var(--s)">${i.image?`<img src="${i.image}" class="card-img">`:''}<h3>${i.name}</h3><h1 style="color:var(--p)">${i.price}</h1><p>${i.features}</p><a href="${i.link}" class="btn">اختر</a></div>`).join('')}</div></div>`;
+        else if(sec.type==='text') body+=`<div class="container"><div style="display:flex;flex-wrap:wrap;align-items:center;gap:30px"> <div style="flex:1"><h2>${d.title}</h2><p style="line-height:1.8">${d.content}</p></div> ${d.image?`<div style="flex:1"><img src="${d.image}" style="width:100%;border-radius:var(--r)"></div>`:''} </div></div>`;
+        else if(sec.type==='contact') body+=`<div class="container" id="contact" style="text-align:center"><h2>${d.title}</h2><div style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin-top:20px">${(d.items||[]).map(i=>`<a href="${i.value}" class="btn" style="display:flex;align-items:center;gap:10px;background:${i.label.includes('فيسبوك')?'#1877f2':i.label.includes('واتس')?'#25d366':'#fff'};color:${i.label.includes('واتس')||i.label.includes('فيس')?'#fff':'var(--p)'};border:1px solid #eee"><i class="${i.icon}"></i> ${i.label}</a>`).join('')}</div></div>`;
         else if(sec.type==='gallery') body+=`<div class="container"><h2>${d.title}</h2><div class="grid">${(d.images||[]).map(img=>`<img src="${img}" style="width:100%;border-radius:10px">`).join('')}</div></div>`;
     });
     body+=`<footer style="padding:40px;text-align:center;background:#1e293b;color:#fff;margin-top:50px">${m.footer}</footer>`;
-    
     return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${m.title}</title><style>${css}${m.headCode}</style>${m.ga_id?`<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`:''}</head><body>${body}</body></html>`;
 }
 
-// --- INIT ---
-function init() {
-    const saved = localStorage.getItem('gemma_studio_pro_v20');
+window.updatePreview = function() { const f = document.getElementById('previewFrame'); if(f) f.srcdoc = window.generateHTML(); }
+
+window.init = function() {
+    const saved = localStorage.getItem('gemma_studio_pro_v22_3');
     if (saved) try { project = JSON.parse(saved); } catch(e){}
-    fillInputs(); renderSidebar(); updatePreview();
+    window.setDevice(currentDevice);
+    window.fillInputs();
+    window.renderSidebar(); 
+    window.updatePreview(); 
 }
 
-// --- GLOBAL PREVIEW FUNCTION ---
-function updatePreview() { 
-    const f = document.getElementById('previewFrame'); 
-    if(f) f.srcdoc = generateHTML(); 
-}
-
-window.addEventListener('DOMContentLoaded', init);
+window.addEventListener('DOMContentLoaded', window.init);
 </script>
 </body>
 </html>
