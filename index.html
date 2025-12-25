@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Builder - Diamond Edition (Manual)</title>
+<title>Pro Builder - Diamond Edition (Enhanced UX)</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&family=Tajawal:wght@300;400;500;700&family=Changa:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -33,9 +33,11 @@ body {
   overflow: hidden;
 }
 
-::-webkit-scrollbar { width: 6px; }
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--bg-dark); }
-::-webkit-scrollbar-thumb { background: #64748b; border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; border: 2px solid var(--bg-panel); }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
 .app-layout {
   display: grid;
@@ -50,6 +52,7 @@ body {
   display: flex; flex-direction: column;
   box-shadow: -5px 0 30px rgba(0,0,0,0.5);
   z-index: 100;
+  height: 100vh; /* Full height */
 }
 
 .panel-header {
@@ -57,19 +60,36 @@ body {
   background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), transparent);
   border-bottom: 1px solid var(--border);
   display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0; /* Don't shrink */
 }
 .brand { font-size: 1.2rem; font-weight: 800; color: white; display: flex; align-items: center; gap: 8px; }
 .brand i { color: var(--secondary); }
 
-.scroll-area { flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 100px; }
-
-/* Tabs */
-.nav-tabs { display: flex; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 10px; margin-bottom: 20px; border: 1px solid var(--border); }
+/* FIXED TABS AREA */
+.sticky-tabs {
+  padding: 10px 15px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.nav-tabs { display: flex; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 8px; border: 1px solid var(--border); gap: 5px; }
 .nav-tab {
   flex: 1; background: transparent; border: none; color: var(--text-muted);
-  padding: 10px; cursor: pointer; border-radius: 6px; font-weight: 600; font-family: inherit; transition: 0.2s; font-size: 0.85rem;
+  padding: 8px; cursor: pointer; border-radius: 6px; font-weight: 600; font-family: inherit; transition: 0.2s; font-size: 0.85rem;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
 }
-.nav-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 10px rgba(79, 70, 229, 0.3); }
+.nav-tab:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+.nav-tab.active { background: var(--primary); color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+
+/* SCROLL AREA */
+.scroll-area { 
+  flex: 1; 
+  overflow-y: auto; 
+  padding: 15px; 
+  padding-bottom: 50px;
+  scroll-behavior: smooth;
+}
+
 .tab-content { display: none; animation: fadeIn 0.3s ease; }
 .tab-content.active { display: block; }
 
@@ -80,8 +100,11 @@ body {
   padding: 12px 15px; background: rgba(255,255,255,0.03); cursor: pointer;
   display: flex; justify-content: space-between; align-items: center;
   font-weight: 600; font-size: 0.9rem; user-select: none;
+  transition: background 0.2s;
 }
-.card-header:hover { background: rgba(255,255,255,0.06); }
+.card-header:hover { background: rgba(255,255,255,0.08); }
+.card-header .drag-handle { cursor: grab; opacity: 0.5; margin-left: 10px; }
+.card-header .drag-handle:hover { opacity: 1; }
 .card-body { padding: 15px; border-top: 1px solid var(--border); display: none; background: rgba(0,0,0,0.2); }
 .card-body.open { display: block; }
 
@@ -99,13 +122,17 @@ input[type="color"] { padding: 0; height: 35px; cursor: pointer; border:none; bo
 input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary); }
 
 /* Buttons & Tools */
+.tools-section-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 30px; margin-bottom: 15px; padding-top: 20px; border-top: 1px solid var(--border);
+}
 .tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
 .tool-btn {
     display: flex; align-items: center; gap: 10px; padding: 12px;
     background: rgba(255,255,255,0.03); border: 1px solid var(--border);
     border-radius: 8px; color: var(--text-muted); cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 0.85rem;
 }
-.tool-btn:hover { background: var(--primary); border-color: var(--primary); color: white; }
+.tool-btn:hover { background: var(--primary); border-color: var(--primary); color: white; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 .tool-btn i { font-size: 1.1rem; }
 
 .btn {
@@ -117,10 +144,11 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .btn-primary:hover { background: var(--primary-hover); }
 .btn-outline { background: transparent; border: 1px dashed var(--border); color: var(--text-muted); }
 .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); background: rgba(255,255,255,0.05); }
-.btn-action { padding: 4px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; transition:0.2s; }
+.btn-action { padding: 5px 10px; font-size: 0.85rem; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 4px; color: var(--text-muted); cursor: pointer; transition:0.2s; }
 .btn-action:hover { background: white; color: black; }
 .btn-danger-icon { color: #f87171; border-color: rgba(239,68,68,0.3); }
 .btn-danger-icon:hover { background: var(--danger); color: white; border-color: var(--danger); }
+.btn-sm { font-size: 0.75rem; padding: 4px 8px; }
 
 /* Media */
 .media-upload {
@@ -129,7 +157,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
   transition: 0.2s; background: rgba(0,0,0,0.1); font-size: 0.85rem;
   display: flex; flex-direction: column; align-items: center; gap: 8px;
 }
-.media-upload:hover { border-color: var(--primary); color: var(--primary); }
+.media-upload:hover { border-color: var(--primary); color: var(--primary); background: rgba(79, 70, 229, 0.05); }
 .preview-container { margin-top: 10px; position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border); }
 .preview-img { width: 100%; height: 120px; object-fit: cover; display: block; background: #000; }
 .remove-media { position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.9); color: white; border: none; width: 24px; height: 24px; border-radius: 4px; cursor: pointer; z-index: 10; display:flex; justify-content:center; align-items:center; }
@@ -147,6 +175,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 .preview-toolbar {
   background: var(--bg-panel); padding: 10px; display: flex; justify-content: center; gap: 20px;
   border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
 }
 .device-btn { cursor: pointer; color: var(--text-muted); font-size: 1.1rem; padding: 8px; transition: 0.2s; border-radius: 6px; }
 .device-btn.active { color: white; background: var(--primary); }
@@ -167,26 +196,34 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 <div class="app-layout">
   <!-- Sidebar -->
   <aside class="control-panel">
+    <!-- 1. Header (Fixed) -->
     <div class="panel-header">
       <div class="brand"><i class="fas fa-gem"></i> Pro Builder <small style="opacity:0.5; margin-right:5px">DIAMOND</small></div>
       <button class="btn-action btn-danger-icon" onclick="resetProject()"><i class="fas fa-trash-alt"></i></button>
     </div>
 
-    <div class="scroll-area">
-      <div class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('content')">المحتوى</button>
-        <button class="nav-tab" onclick="switchTab('design')">المظهر</button>
-        <button class="nav-tab" onclick="switchTab('settings')">الإعدادات</button>
-        <button class="nav-tab" onclick="switchTab('export')">تصدير</button>
-      </div>
+    <!-- 2. Tabs (Fixed - IMPROVED UX) -->
+    <div class="sticky-tabs">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('content')"><i class="fas fa-layer-group"></i> المحتوى</button>
+            <button class="nav-tab" onclick="switchTab('design')"><i class="fas fa-paint-brush"></i> المظهر</button>
+            <button class="nav-tab" onclick="switchTab('settings')"><i class="fas fa-cog"></i> الإعدادات</button>
+            <button class="nav-tab" onclick="switchTab('export')"><i class="fas fa-file-export"></i> تصدير</button>
+        </div>
+    </div>
 
+    <!-- 3. Scroll Area (Flexible) -->
+    <div class="scroll-area">
       <!-- 1. CONTENT TAB -->
       <div id="tab-content" class="tab-content active">
         <div id="sections-wrapper"></div>
         
-        <div style="margin-top:25px; border-top:1px solid var(--border); padding-top:20px;">
-          <label class="form-label" style="text-align:center; margin-bottom:15px; opacity:0.8">إضافة عنصر جديد</label>
-          <div class="tools-grid">
+        <div class="tools-section-header">
+            <label class="form-label" style="font-size:0.85rem; margin:0">إضافة عنصر جديد</label>
+            <button class="btn-action btn-sm" onclick="toggleAllCards(false)" title="طي الكل لسهولة الترتيب"><i class="fas fa-compress-alt"></i> طي الكل</button>
+        </div>
+        
+        <div class="tools-grid">
             <button class="tool-btn" onclick="addSection('hero')"><i class="fas fa-desktop"></i> واجهة (Hero)</button>
             <button class="tool-btn" onclick="addSection('features')"><i class="fas fa-th-large"></i> مميزات (Cards)</button>
             <button class="tool-btn" onclick="addSection('video')"><i class="fas fa-play-circle"></i> فيديو</button>
@@ -195,7 +232,6 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
             <button class="tool-btn" onclick="addSection('pricing')"><i class="fas fa-tags"></i> أسعار</button>
             <button class="tool-btn" onclick="addSection('contact')"><i class="fas fa-envelope"></i> تواصل</button>
             <button class="tool-btn" onclick="addSection('links')"><i class="fas fa-link"></i> روابط</button>
-          </div>
         </div>
       </div>
 
@@ -275,14 +311,14 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
                 <div class="form-group"><label class="form-label">Meta Pixel ID</label><input type="text" class="form-control" placeholder="123456789" id="pixelId" oninput="updateSettings('pixel_id', this.value)"></div>
             </div>
         </div>
-        <!-- NEW SECTION: Custom Head Code -->
+        <!-- Head Code Section -->
         <div class="card">
             <div class="card-header" onclick="toggleCard(this)">💻 كود مخصص (CSS/JS)</div>
             <div class="card-body open">
                 <div class="form-group">
                     <label class="form-label">كود مخصص في الرأس (Head Code)</label>
                     <textarea class="form-control" id="headCode" style="height:150px; direction:ltr; text-align:left; font-family:monospace; font-size:12px; white-space:pre" placeholder="<!-- Add styles or scripts here -->&#10;<style>&#10;  body { background: red; }&#10;</style>" oninput="updateSettings('headCode', this.value)"></textarea>
-                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم إدراج هذا الكود داخل وسم &lt;head&gt;. ممتاز لإضافة CSS مخصص.</p>
+                    <p style="font-size:0.7rem; color:var(--text-muted); margin-top:5px; text-align:right">يتم إدراج هذا الكود داخل وسم &lt;head&gt;.</p>
                 </div>
             </div>
         </div>
@@ -326,7 +362,7 @@ input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--primary)
 
 // Default State
 const defaultState = {
-    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '' }, // Added headCode
+    settings: { title: 'موقعي الجديد', logo: '', footer: 'جميع الحقوق محفوظة 2025', ga_id: '', pixel_id: '', headCode: '' },
     style: { font: "'Tajawal', sans-serif", primaryColor: '#4f46e5', secondaryColor: '#ec4899', bgColor: '#ffffff', textColor: '#1e293b', radius: '12', containerWidth: '1100px', glass: false },
     sections: [
         { id: 's1', type: 'hero', name: 'واجهة رئيسية', data: { title: 'عنوان موقعك المميز', subtitle: 'نص تعريفي قصير يوضح خدماتك.', btnText: 'ابدأ الآن', btnLink: '#', align: 'center', height: '85vh', overlay: '0.6', uploadedBg: '', uploadedVideo: '' } }
@@ -344,8 +380,7 @@ function init() {
     updatePreview(); // Render Preview Iframe
 }
 
-// --- STATE MANAGEMENT (Fixes Focus Loss) ---
-// We separate Rendering Sidebar (Structure) from Updating Data (Values)
+// --- STATE MANAGEMENT ---
 
 function renderSidebar() {
     const wrapper = document.getElementById('sections-wrapper');
@@ -356,15 +391,15 @@ function renderSidebar() {
         card.className = 'card';
         card.innerHTML = `
             <div class="card-header" onclick="toggleCard(this)">
-                <span><span style="color:var(--primary); margin-left:5px">${idx+1}.</span> ${sec.name}</span>
+                <span><i class="fas fa-bars drag-handle"></i> <span style="color:var(--primary); margin-left:5px">${idx+1}.</span> ${sec.name}</span>
                 <div onclick="event.stopPropagation()">
-                    <button class="btn-action" onclick="moveSection(${idx},-1)">▲</button>
-                    <button class="btn-action" onclick="moveSection(${idx},1)">▼</button>
-                    <button class="btn-action" onclick="duplicateSection(${idx})"><i class="far fa-copy"></i></button>
-                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})"><i class="fas fa-times"></i></button>
+                    <button class="btn-action" onclick="moveSection(${idx},-1)" title="تحريك لأعلى">▲</button>
+                    <button class="btn-action" onclick="moveSection(${idx},1)" title="تحريك لأسفل">▼</button>
+                    <button class="btn-action" onclick="duplicateSection(${idx})" title="تكرار"><i class="far fa-copy"></i></button>
+                    <button class="btn-action btn-danger-icon" onclick="deleteSection(${idx})" title="حذف"><i class="fas fa-times"></i></button>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body ${sec.collapsed ? '' : 'open'}">
                 <div class="form-group">
                     <label class="form-label">اسم القسم (للتنظيم)</label>
                     <input type="text" class="form-control" value="${sec.name}" oninput="updateSecName(${idx}, this.value)">
@@ -464,7 +499,6 @@ function getControls(sec, idx) {
 
 function addSection(type) {
     let data = {}; 
-    // Manual Defaults
     if(type==='hero') data = { title:'عنوان واجهة جذاب', subtitle:'وصف مختصر.', btnText:'تواصل معنا', btnLink:'#', align:'center', height:'85vh', overlay:'0.6', uploadedBg:'', uploadedVideo:'' };
     if(type==='features') data = { title:'مميزاتنا', items:[{title:'ميزة 1', icon:'⭐', text:'وصف الميزة'}] };
     if(type==='gallery') data = { title:'معرض الصور', images:[] };
@@ -474,12 +508,15 @@ function addSection(type) {
     if(type==='pricing') data = { title:'الأسعار', items:[{name:'باقة', price:'$10', features:'ميزات...', link:'#'}] };
     if(type==='links') data = { title:'روابط', items:[{label:'رابط', url:'#'}] };
 
-    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data });
+    project.sections.push({ id: 's'+Date.now(), type, name: type.toUpperCase(), data, collapsed: false });
     renderSidebar(); updatePreview(); saveData();
-    setTimeout(()=>document.querySelector('.scroll-area').scrollTop = document.querySelector('.scroll-area').scrollHeight, 100);
+    // Scroll smoothly to bottom
+    setTimeout(() => {
+        const scrollArea = document.querySelector('.scroll-area');
+        scrollArea.scrollTo({ top: scrollArea.scrollHeight, behavior: 'smooth' });
+    }, 100);
 }
 
-// This function updates data WITHOUT re-rendering the sidebar (Crucial for focus)
 function updateData(idx, key, val) {
     project.sections[idx].data[key] = val;
     updatePreview(); saveData();
@@ -487,10 +524,9 @@ function updateData(idx, key, val) {
 
 function updateSecName(idx, val) {
     project.sections[idx].name = val;
-    saveData(); // No preview update needed for name change
+    saveData(); 
 }
 
-// Structure changes require re-render
 function moveSection(idx, dir) {
     if(idx+dir < 0 || idx+dir >= project.sections.length) return;
     const temp = project.sections[idx]; project.sections[idx] = project.sections[idx+dir]; project.sections[idx+dir] = temp;
@@ -504,6 +540,10 @@ function duplicateSection(idx) {
 }
 function deleteSection(idx) {
     if(confirm('حذف هذا القسم؟')) { project.sections.splice(idx,1); renderSidebar(); updatePreview(); saveData(); }
+}
+function toggleAllCards(open) {
+    project.sections.forEach(s => s.collapsed = !open);
+    renderSidebar();
 }
 
 // Item Handling
@@ -593,8 +633,7 @@ function fillInputs() {
     document.getElementById('footerText').value = project.settings.footer;
     document.getElementById('gaId').value = project.settings.ga_id;
     document.getElementById('pixelId').value = project.settings.pixel_id;
-    // Fill custom head code
-    document.getElementById('headCode').value = project.settings.headCode || ''; 
+    document.getElementById('headCode').value = project.settings.headCode || '';
 
     if(project.settings.logo) { document.getElementById('logo-preview').src = project.settings.logo; document.getElementById('logo-preview-container').style.display='block'; }
     else { document.getElementById('logo-preview-container').style.display='none'; }
@@ -611,7 +650,6 @@ function generateHTML() {
     if(m.ga_id) scripts += `<script async src="https://www.googletagmanager.com/gtag/js?id=${m.ga_id}"><\/script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${m.ga_id}');<\/script>`;
     if(m.pixel_id) scripts += `<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${m.pixel_id}');fbq('track','PageView');<\/script>`;
     
-    // Inject Custom Head Code
     const customHead = m.headCode || '';
 
     let css = `
@@ -687,7 +725,10 @@ function saveData() { localStorage.setItem('pro_diamond_manual', JSON.stringify(
 function showToast() { const t=document.getElementById('toast'); t.style.opacity='1'; setTimeout(()=>t.style.opacity='0', 1500); }
 function updatePreview() { const f=document.getElementById('previewFrame'); if(f) f.srcdoc = generateHTML(); }
 function switchTab(id) { document.querySelectorAll('.tab-content').forEach(e=>e.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(e=>e.classList.remove('active')); document.getElementById('tab-'+id).classList.add('active'); event.target.classList.add('active'); }
-function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
+function toggleCard(h) { 
+    h.nextElementSibling.classList.toggle('open'); 
+    // Save collapsed state (simplified for UI feel, persistent storage logic can be enhanced)
+}
 function setDevice(m) { document.querySelectorAll('.device-btn').forEach(e=>e.classList.remove('active')); event.target.classList.add('active'); document.getElementById('previewFrame').className='preview-frame '+m; }
 function downloadHTML() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([generateHTML()], {type:'text/html'})); a.download='website.html'; a.click(); }
 function exportJSON() { const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(project)], {type:'application/json'})); a.download='project.json'; a.click(); }
@@ -698,4 +739,3 @@ init();
 </script>
 </body>
 </html>
-
